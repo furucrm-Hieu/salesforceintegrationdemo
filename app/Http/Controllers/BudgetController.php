@@ -30,7 +30,10 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        return view('budget.list', ['budgets' => $this->mBudget::whereNotNull('sfid')->get()]);
+        // return view('budget.list', ['budgets' => $this->mBudget::whereNotNull('sfid')->get()]);
+        // return view('budget.list', ['budgets' => []]);
+        $budgets = [];
+        return view('budget.list', compact('budgets'));
     }
 
     /**
