@@ -14,7 +14,7 @@ class ProposalBudget extends Model
     protected $primaryKey = 'id';
     
     protected $fillable = [
-        'id', 'proposal__c', 'budget__c', 'amount__c', 'external_id__c'
+        'id', 'proposal__c', 'budget__c', 'amount__c'
     ];
 
     public function budget() {

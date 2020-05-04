@@ -37,7 +37,8 @@ class ProposalController extends Controller
      */
     public function index()
     {
-        $proposals = $this->mProposal::whereNotNull('sfid')->get();
+        // $proposals = $this->mProposal::whereNotNull('sfid')->get();
+        $proposals = [];
         return view('proposal.list', compact('proposals'));
     }
 

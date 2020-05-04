@@ -11,53 +11,48 @@ class CreateGroupProposalBudget extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::create('proposal__c', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name', 80);
-            $table->integer('year__c');
-            $table->dateTime('proposed_at__c');
-            $table->dateTime('approved_at__c');
-            $table->longText('detail__c');
-            $table->decimal('total_amount__c', 16, 2);
-            $table->string('external_id__c',80);
-            $table->timestamps();
-        });
+    // public function up()
+    // {
+    //     Schema::create('proposal__c', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->string('name', 80);
+    //         $table->string('year__c', 4);
+    //         $table->timestamp('proposed_at__c');
+    //         $table->timestamp('approved_at__c');
+    //         $table->longText('detail__c');
+    //         $table->double('total_amount__c', 16, 2);
+    //         $table->string('sfid', 20);
+    //         $table->timestamps();
+    //     });
 
-        Schema::create('budget__c', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name', 80);
-            $table->integer('year__c');
-            $table->decimal('total_amount__c', 16, 2);
-            $table->string('external_id__c',80);
-            $table->timestamps();
-        });
+    //     Schema::create('budget__c', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->string('name', 80);
+    //         $table->string('year__c', 4);
+    //         $table->double('total_amount__c', 16, 2);
+    //         $table->string('sfid', 20);
+    //         $table->timestamps();
+    //     });
 
-        Schema::create('proposal_budget__c', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('proposal_id__c');
-            $table->unsignedBigInteger('budget_id__c');
-            $table->decimal('amount__c', 16, 2);
-            $table->timestamps();
-            
-            $table->foreign('proposal_id__c')->references('id')
-                    ->on('proposal__c')->onDelete('cascade');
-            $table->foreign('budget_id__c')->references('id')
-                    ->on('budget__c')->onDelete('cascade');
-        });
+    //     Schema::create('proposal_budget__c', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->integer('proposal_id__c');
+    //         $table->integer('budget_id__c');
+    //         $table->double('amount__c', 16, 2);
+    //         $table->timestamps();
+    //     });
 
-    }
+    // }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('proposal');
-        Schema::dropIfExists('budget');
-        Schema::dropIfExists('proposal_budget');
-    }
+    // /**
+    //  * Reverse the migrations.
+    //  *
+    //  * @return void
+    //  */
+    // public function down()
+    // {
+    //     Schema::dropIfExists('proposal');
+    //     Schema::dropIfExists('budget');
+    //     Schema::dropIfExists('proposal_budget');
+    // }
 }
