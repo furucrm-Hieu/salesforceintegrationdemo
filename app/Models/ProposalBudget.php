@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProposalBudget extends Model
 {
-    public $timestamps = false;
+    // public $timestamps = false;
 
     // protected $table = 'salesforce.proposal_budget__c';
     protected $table = 'proposal_budget__c';
@@ -14,7 +14,7 @@ class ProposalBudget extends Model
     protected $primaryKey = 'id';
     
     protected $fillable = [
-        'id', 'proposal__c', 'budget__c', 'amount__c'
+        'proposal__c', 'budget__c', 'amount__c', 'sfid'
     ];
 
     public function budget() {

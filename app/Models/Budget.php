@@ -12,7 +12,7 @@ class Budget extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id', 'name', 'year__c', 'total_amount__c', 'sfid',
+        'name', 'year__c', 'total_amount__c', 'sfid',
     ];
 
     /**
@@ -20,7 +20,7 @@ class Budget extends Model
      *
      * @var bool
      */
-    public $timestamps = false;
+    //public $timestamps = false;
     
     public function proposal() {
         return $this->belongsToMany('App\Models\Proposal', 'salesforce.proposal_budget__c', 'budget__c', 'proposal__c')->withPivot('id', 'budget__c', 'proposal__c', 'amount__c');
