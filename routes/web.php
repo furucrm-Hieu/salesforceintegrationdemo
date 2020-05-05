@@ -17,7 +17,10 @@ Route::group(['middleware' => ['checkAuth']], function() {
     Route::resource('/proposal', 'ProposalController');
     Route::resource('/budget', 'BudgetController');
     Route::resource('/proposalbudget', 'ProposalBudgetController');
+    Route::resource('/user', 'UserController');
     Route::get('lang/{locale}', 'AuthController@changeLocalization');
+    Route::get('/authSalesforce', 'ApiController@authSalesforce')->name('authSalesforce');
+    Route::get('/callback', 'ApiController@callback');
 });
 Route::get('', 'AuthController@getLogin');
 Route::post('post-login', 'AuthController@postLogin');

@@ -24,13 +24,13 @@
       background-color: #0779e4;
       padding: 10px;
     }
-    
+
     @media (max-width: 767px) {
       .content-wrapper {
         margin-top: 50px;
       }
     }
-    
+
   </style>
   <!-- Google Font -->
   <link rel="stylesheet"
@@ -79,12 +79,16 @@
               {{Auth::user()->name}}
             </a>
             <ul class="dropdown-menu" style="width: 20px; min-width: 87px !important;">
+                <li class="footer">
+                    <a href="{{ route('user.show', [ 'user' => Auth::user()->id]) }}">@lang('messages.Profile')</a>
+                </li>
               <li class="footer">
                 <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">@lang('messages.Sign_Out')</a>
               </li>
+
             </ul>
           </li>
-          
+
         </ul>
       </div>
 
@@ -103,7 +107,7 @@
     @yield('content')
   </div>
   <!-- /.content-wrapper -->
-  
+
 
   <div class="control-sidebar-bg"></div>
 </div>
@@ -145,13 +149,13 @@
         }
         else {
           alert('Error, Please contact Admin');
-        }       
+        }
       },
       error: function (res) {
         alert('Error, Please contact Admin');
       }
     });
-      
+
   }
 
   function confirmDeleteAjax(event, link, id) {
@@ -169,7 +173,7 @@
           }
           else {
             alert('Error, Please contact Admin');
-          }       
+          }
         },
         error: function (res) {
           alert('Error, Please contact Admin');
@@ -177,7 +181,7 @@
       });
     }
   }
-  
+
 </script>
 @yield('JS')
 </body>

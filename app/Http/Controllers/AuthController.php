@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 use Validator,Redirect,Response;
 Use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use App;
-
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -17,7 +16,7 @@ class AuthController extends Controller
         if(Auth::check()){
             return redirect('proposal');
         }
-        
+
         return view('auth.login');
     }
 
@@ -28,7 +27,7 @@ class AuthController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
- 
+
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             return redirect('proposal');

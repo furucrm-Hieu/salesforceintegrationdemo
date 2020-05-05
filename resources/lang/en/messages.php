@@ -1,6 +1,6 @@
-<?php 
+<?php
     //resources/lang/en/messages.php
-    
+
     return [
         'Edit' => 'Edit',
         'Delete' => 'Delete',
@@ -37,5 +37,12 @@
         'Password' => 'Password',
         'Welcom_Back' => 'Welcome Back',
         'None' => 'None',
+        'Profile' => 'Profile', //
+        'Connect' => 'Connect', //
+        'Disconnect' => 'Disconnect',//
+        'Disconnected' => 'Disconnected',
+        'Status' => 'Status', //
+        'Profile' => 'Profile', //
+        'Synced' => 'Synced' //
     ];
 ?>

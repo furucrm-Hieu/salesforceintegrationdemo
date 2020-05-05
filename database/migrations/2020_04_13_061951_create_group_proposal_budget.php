@@ -15,9 +15,9 @@ class CreateGroupProposalBudget extends Migration
     {
         Schema::create('api_connect', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('accessToken');
-            $table->string('refreshToken');
-            $table->boolean('status');
+            $table->string('accessToken')->nullable();
+            $table->string('refreshToken')->nullable();
+            $table->enum('status', array('Synced', 'Disconnected'))->default('Disconnected');
             $table->timestamps();
         });
 

@@ -12,3 +12,7 @@ npm-debug.log
 yarn-error.log
 Procfile
 /laradock
+/docker-compose.yml
+/Dockerfile
+/nginx
+.env.aws
