@@ -23,9 +23,9 @@ class ApiController extends Controller
 
     public function authSalesforce(Request $request) {
         try {
-            $api = ApiConnect::find(1);
+            $api = $this->apiConnect::latest()->first();;
             if(isset($api)) {
-                $api->status = $api->status == __('messages.Synced') ? __('messages.Disconnected') : __('messages.Synced');
+                $api->status = $api->status == 'Synced' ? 'Disconnected' : 'Synced';
                 $api->save();
             }
             else {
@@ -39,19 +39,20 @@ class ApiController extends Controller
 
     public function refreshToken($refresh_code) {
         $authenSalesforce = new AuthenSalesforce();
-        return $authenSalesforce->refreshToken($refresh_code);
+        $token = $authenSalesforce->refreshToken($refresh_code);
+        $api = $this->apiConnect::latest()->fill(['accessToken' => $token]);
+        $api->save();
     }
 
     public function callback(Request $request) {
-        $error = '';
         try{
             $token = json_decode($this->authenSalesforce->getToken($request->code));
             $this->apiConnect::create([
                 'accessToken' => $token->access_token,
                 'refreshToken' => $token->refresh_token,
-                'status' =>  __('messages.Synced')
+                'status' =>  'Synced'
             ]);
-
+            dd($token);
         }
         catch(\Exception $ex) {
             //dd($ex);

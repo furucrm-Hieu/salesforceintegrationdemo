@@ -27,14 +27,15 @@
             <div class="box">
                 <div class="row" style="height: 200px;">
                     <div class="centered">
-                        <div class="col-xs-6 col-xs-offset-3" style="text-align: center; margin-bottom:10px">@lang('messages.Status'): {{ isset($api) ? $api->status : __('messages.Disconnected') }}</div>
+                        <div class="col-xs-6 col-xs-offset-3" style="text-align: center; margin-bottom:10px">
+                            <h4>@lang('messages.Status'): {{ isset($api) && $api->status == 'Synced' ? __('messages.Synced')  : __('messages.Disconnected') }}</h4>
+                        </div>
                         <div class="col-xs-6 col-xs-offset-3">
-                            <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) && $api->status == __('messages.Synced') ? 'btn-danger' : 'btn-success' }}">
-                                @if (!isset($api) || $api->status == __('messages.Disconnected'))
-                                    @lang('messages.Synced')
-                                @else
-                                    @lang('messages.Disconnected')
-                                @endif
+                            <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) && $api->status == 'Synced' ? 'btn-danger' : 'btn-success' }}">
+                                {{ !isset($api) || $api->status == 'Disconnected' ? __('messages.Synced')  : __('messages.Disconnected')}}
+                            </a>
+                            <a href="{{ route('user.store', ['token' => $api->accessToken]) }}" class="btn btn-block {{ isset($api) && $api->status == 'Synced' ? 'btn-danger' : 'btn-success' }}">
+                                {{ !isset($api) || $api->status == 'Disconnected' ? __('messages.Synced')  : __('messages.Disconnected')}}
                             </a>
                         </div>
                     </div>
