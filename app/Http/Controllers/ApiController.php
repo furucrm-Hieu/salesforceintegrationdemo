@@ -23,7 +23,7 @@ class ApiController extends Controller
 
     public function authSalesforce(Request $request) {
         try {
-            $api = $this->apiConnect::latest()->first();;
+            $api = $this->apiConnect::latest()->first();
             if(isset($api)) {
                 $api->status = $api->status == 'Synced' ? 'Disconnected' : 'Synced';
                 $api->save();
