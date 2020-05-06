@@ -52,7 +52,7 @@ class ApiController extends Controller
                 'refreshToken' => $token->refresh_token,
                 'status' =>  'Synced'
             ]);
-            dd($token);
+            //dd($token);
         }
         catch(\Exception $ex) {
             //dd($ex);

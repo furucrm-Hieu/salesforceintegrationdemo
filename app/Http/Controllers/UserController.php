@@ -76,7 +76,7 @@ class UserController extends Controller
 
         // dd($curl);
         // curl_close($curl);
-        return view('user.profile', compact('status', 'api'));
+        return view('user.profile', compact('api'));
     }
 
     /**
