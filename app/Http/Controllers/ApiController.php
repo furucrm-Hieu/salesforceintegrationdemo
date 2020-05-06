@@ -37,11 +37,17 @@ class ApiController extends Controller
         return redirect()->back();
     }
 
-    public function refreshToken($refresh_code) {
-        $authenSalesforce = new AuthenSalesforce();
-        $token = $authenSalesforce->refreshToken($refresh_code);
-        $api = $this->apiConnect::latest()->fill(['accessToken' => $token]);
-        $api->save();
+    public function refreshToken() {
+        try {
+            $api = $this->apiConnect::latest()->first();
+            $authenSalesforce = new AuthenSalesforce();
+            $token = json_decode($authenSalesforce->refreshToken($api->refreshToken));
+            $api->fill(['accessToken' => $token->access_token]);
+            $api->save();
+            return response()->json(['success' => true]);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false]);
+        }
     }
 
     public function callback(Request $request) {

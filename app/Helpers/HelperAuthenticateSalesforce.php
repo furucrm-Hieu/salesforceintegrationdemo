@@ -31,20 +31,32 @@ class HelperAuthenticateSalesforce{
     }
 
     public function getToken($code) {
-        return $this->callAuth2getToken($code, 'authorization_code');
+        return $this->callAuth2getToken($code);
     }
 
     public function refreshToken($code) {
-        return $this->callAuth2getToken($code, 'refresh_token');
+        return $this->callAuth2RefreshToken($code);
     }
 
-    private function callAuth2getToken($code, $type) {
+    private function callAuth2getToken($code) {
         $response = HTTP::asForm()->post($this->uri.'/services/oauth2/token', [
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
-            'grant_type' => $type,
+            'grant_type' => 'authorization_code',
             'redirect_uri' => $this->redirect_uri,
             'code' => $code
+        ]);
+        $response->throw();
+        return $response->body();
+    }
+
+    private function callAuth2RefreshToken($code) {
+        $response = HTTP::asForm()->post($this->uri.'/services/oauth2/token', [
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'grant_type' => 'refresh_token',
+            'redirect_uri' => $this->redirect_uri,
+            'refresh_token' => $code
         ]);
         $response->throw();
         return $response->body();

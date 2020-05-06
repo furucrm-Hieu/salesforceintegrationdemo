@@ -34,9 +34,9 @@
                             <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) && $api->status == 'Synced' ? 'btn-danger' : 'btn-success' }}">
                                 {{ !isset($api) || $api->status == 'Disconnected' ? __('messages.Synced')  : __('messages.Disconnected')}}
                             </a>
-                            <a href="{{ route('user.store', ['token' => $api->accessToken]) }}" class="btn btn-block {{ isset($api) && $api->status == 'Synced' ? 'btn-danger' : 'btn-success' }}">
+                            {{-- <a href="{{ route('refreshToken') }}" class="btn btn-block {{ isset($api) && $api->status == 'Synced' ? 'btn-danger' : 'btn-success' }}">
                                 {{ !isset($api) || $api->status == 'Disconnected' ? __('messages.Synced')  : __('messages.Disconnected')}}
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
                 </div>

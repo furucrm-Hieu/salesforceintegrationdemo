@@ -16,3 +16,4 @@ Procfile
 /Dockerfile
 /nginx
 .env.aws
+/tutu
