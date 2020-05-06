@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Proposal;
 use App\Models\Budget;
 use App\Models\ProposalBudget;
+use App\Models\ApiConnect;
 use App\Helpers\HelperConvertDateTime;
 use App\Helpers\HelperHandleTotalAmount;
+use App\Helpers\HelperGuzzleService;
 use DB, Session;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -21,13 +23,16 @@ class ProposalController extends Controller
     protected $mProposalBudget;
     protected $hHelperConvertDateTime;
     protected $hHelperHandleTotalAmount;
+    protected $hHelperGuzzleService;
 
-    public function __construct(Proposal $mProposal, ProposalBudget $mProposalBudget, Budget $mBudget, HelperConvertDateTime $hHelperConvertDateTime, HelperHandleTotalAmount $hHelperHandleTotalAmount) {
+    public function __construct(Proposal $mProposal, ProposalBudget $mProposalBudget, Budget $mBudget, HelperConvertDateTime $hHelperConvertDateTime, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
         $this->mProposal = $mProposal;
         $this->mBudget = $mBudget;
         $this->mProposalBudget = $mProposalBudget;
         $this->hHelperConvertDateTime = $hHelperConvertDateTime;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
+        $this->hHelperGuzzleService = $hHelperGuzzleService;
+        $this->vApiConnect = ApiConnect::latest()->first();
     }
 
     /**
@@ -37,8 +42,7 @@ class ProposalController extends Controller
      */
     public function index()
     {
-        // $proposals = $this->mProposal::whereNotNull('sfid')->get();
-        $proposals = [];
+        $proposals = $this->mProposal::all();
         return view('proposal.list', compact('proposals'));
     }
 
@@ -65,7 +69,6 @@ class ProposalController extends Controller
         try {
 
             $validator = Validator::make($request->all(), $this->validation());
-
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -77,11 +80,40 @@ class ProposalController extends Controller
             $requestData['total_amount__c'] = 0;
             $requestData['approved_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('approved_at'));
             $requestData['proposed_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('proposed_at'));
-            $requestData['external_id__c'] = uniqid(Str::random(5));
 
             $proposal = $this->mProposal->create($requestData);
 
             DB::commit();
+
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+
+                $dataProposal = [];
+                $dataProposal['Name'] = $proposal->name;
+                $dataProposal['Year__c'] = $proposal->year__c;
+                $dataProposal['Details__c'] = $proposal->details__c;
+                $dataProposal['Total_Amount__c'] = 0;
+                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->approved_at__c);
+                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->proposed_at__c);
+
+                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $this->vApiConnect->accessToken, $dataProposal);
+                $response = json_decode($response);
+                
+                if(isset($response->success) && $response->success == true) {
+                    $proposal->update(['sfid' => $response->id]);
+                }else if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+
+                        $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $access_token, $dataProposal);
+                        $response1 = json_decode($response1);
+                        if(isset($response1->success) && $response1->success == true) {
+                            $proposal->update(['sfid' => $response1->id]);
+                        }
+                    }
+                }
+            }
+
             return redirect('proposal/'.$proposal->id);
 
         } catch (\Exception $ex) {
@@ -106,12 +138,7 @@ class ProposalController extends Controller
                 $listBudget = [];
             }
             else {
-                $listBudget = $this->mProposalBudget->whereNotNull('proposal__c')
-                    ->whereNotNull('budget__c')
-                    ->whereNotNull('amount__c')
-                    ->whereNotNull('external_id__c')
-                    ->whereNotNull('id')
-                    ->where('proposal__c', $proposal->sfid)
+                $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)
                     ->with('budget')
                     ->get();
             }
@@ -172,8 +199,30 @@ class ProposalController extends Controller
             $proposal->update($requestData);
 
             DB::commit();
-            return redirect('proposal/'.$proposal->id);
 
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+
+                $dataProposal = [];
+                $dataProposal['Name'] = $proposal->name;
+                $dataProposal['Year__c'] = $proposal->year__c;
+                $dataProposal['Details__c'] = $proposal->details__c;
+                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->approved_at__c);
+                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->proposed_at__c);
+
+                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken, $dataProposal);
+                $response = json_decode($response);
+
+                if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+                        $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token, $dataProposal);
+                    }
+                }
+            }
+
+            return redirect('proposal/'.$proposal->id);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalController');
             DB::rollback();
@@ -196,7 +245,21 @@ class ProposalController extends Controller
             $listProposalBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->delete();
             $proposal->delete();
             DB::commit();
-            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
+            //$this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
+
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
+
+                $response = json_decode($response);
+                if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                    
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+                        $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token);
+                    }
+                }
+            }
 
             if($request->ajax()){
                 return response()->json(['success' => true]);

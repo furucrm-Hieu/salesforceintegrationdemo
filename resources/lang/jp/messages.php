@@ -37,5 +37,12 @@
         'Password' => 'パスワード',
         'Welcom_Back' => 'おかえり',
         'None' => '指定なし',
+        'Profile' => 'Profile',
+        'Connect' => 'Connect',
+        'Disconnect' => 'Disconnect',
+        'Disconnected' => 'Disconnected',
+        'Status' => 'Status',
+        'Profile' => 'Profile',
+        'Synced' => 'Synced'
     ];
 ?>

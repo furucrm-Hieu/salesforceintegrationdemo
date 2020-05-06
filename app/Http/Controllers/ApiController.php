@@ -58,10 +58,8 @@ class ApiController extends Controller
                 'refreshToken' => $token->refresh_token,
                 'status' =>  'Synced'
             ]);
-            //dd($token);
         }
         catch(\Exception $ex) {
-            //dd($ex);
             Log::info($ex->getMessage().'- callback - ApiController');
         }
         return redirect()->route('user.show', ['user' => Auth::user()->id]);

@@ -37,12 +37,12 @@
         'Password' => 'Password',
         'Welcom_Back' => 'Welcome Back',
         'None' => 'None',
-        'Profile' => 'Profile', //
-        'Connect' => 'Connect', //
-        'Disconnect' => 'Disconnect',//
+        'Profile' => 'Profile',
+        'Connect' => 'Connect',
+        'Disconnect' => 'Disconnect',
         'Disconnected' => 'Disconnected',
-        'Status' => 'Status', //
-        'Profile' => 'Profile', //
-        'Synced' => 'Synced' //
+        'Status' => 'Status',
+        'Profile' => 'Profile',
+        'Synced' => 'Synced'
     ];
 ?>

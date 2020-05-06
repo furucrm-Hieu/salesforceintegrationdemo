@@ -18,5 +18,12 @@ class HelperConvertDateTime
 		$dateTimeJP = $dateTimeUTC->addHours(9);
 		return $dateTimeJP->toDateTimeString();
   }
+
+  public static function convertDateTimeCallApi(string $string)
+  {
+    $dateTimeCallApi = Carbon::createFromFormat('Y-m-d H:i:s', $string);
+    $dateTimeCallApi = $dateTimeCallApi->format('Y-m-d\TH:i:s');
+    return $dateTimeCallApi;
+  }
 }
 
