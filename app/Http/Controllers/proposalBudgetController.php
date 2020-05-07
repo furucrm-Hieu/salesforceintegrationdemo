@@ -80,7 +80,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -221,7 +221,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -273,7 +273,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);

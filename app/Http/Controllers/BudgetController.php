@@ -76,7 +76,7 @@ class BudgetController extends Controller
 
             DB::commit();
             
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
@@ -177,12 +177,11 @@ class BudgetController extends Controller
             
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
-                $dataBudget['Total_Amount__c'] = 0;
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken, $dataBudget);
                 $response = json_decode($response);
@@ -222,7 +221,7 @@ class BudgetController extends Controller
             DB::commit();
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('budget');
             
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);
