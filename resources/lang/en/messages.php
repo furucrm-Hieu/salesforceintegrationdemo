@@ -40,9 +40,7 @@
         'Profile' => 'Profile', //
         'Connect' => 'Connect', //
         'Disconnect' => 'Disconnect',//
-        'Disconnected' => 'Disconnected',
-        'Status' => 'Status', //
-        'Profile' => 'Profile', //
-        'Synced' => 'Synced' //
+        'Disconnected' => 'Disconnected',//
+        'Status' => 'Salesforce connect status' //
     ];
 ?>

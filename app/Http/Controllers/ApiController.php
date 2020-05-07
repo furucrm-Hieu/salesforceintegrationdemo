@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Log;
 use App\Helpers\HelperAuthenticateSalesforce as AuthenSalesforce;
 use App\Models\ApiConnect;
 use Illuminate\Support\Facades\Auth;
-
 use function GuzzleHttp\json_decode;
 
 class ApiController extends Controller
@@ -25,8 +24,7 @@ class ApiController extends Controller
         try {
             $api = $this->apiConnect::latest()->first();
             if(isset($api)) {
-                $api->status = $api->status == 'Synced' ? 'Disconnected' : 'Synced';
-                $api->save();
+                $api->delete();
             }
             else {
                 return $this->authenSalesforce->getCode();
@@ -46,6 +44,7 @@ class ApiController extends Controller
             $api->save();
             return response()->json(['success' => true]);
         } catch (\Exception $ex) {
+            Log::info($ex->getMessage().'- callback - ApiController');
             return response()->json(['success' => false]);
         }
     }
@@ -58,7 +57,6 @@ class ApiController extends Controller
                 'refreshToken' => $token->refresh_token,
                 'status' =>  'Synced'
             ]);
-            //dd($token);
         }
         catch(\Exception $ex) {
             //dd($ex);

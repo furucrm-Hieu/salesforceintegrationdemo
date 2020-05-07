@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiConnect;
+use App\Models\User;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
@@ -55,28 +57,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        $user = User::findorFail(Auth::user()->id);
         $api = $this->apiConnect->latest()->first();
-
-        //  $client = Http::post('https://eap-prototype-dev-ed.my.salesforce.com/services/data/v48.0/sobjects/account/describe', [
-        //      'Authorization' => 'Bearer '.$api->accessToken
-        //  ]);
-        // dd(json_decode($client->body()));
-        // $curl = curl_init();
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_RETURNTRANSFER => 1,
-        //     CURLOPT_URL => 'https://eap-prototype-dev-ed.my.salesforce.com/services/data/v48.0/sobjects/account/describe',
-        //         CURLOPT_POST => 1,
-        //         CURLOPT_SSL_VERIFYPEER => false, //Bỏ kiểm SSL
-        //         CURLOPT_POSTFIELDS => http_build_query(array(
-        //             'Authorization' => 'Bearer 00D2w000003yx07!ARAAQNsxMdxRde5wsyefOtaw7c2H4hBSx5E_rVZPXSkfggRYKTDaOQ0SC2FNa4scnsoLJMNBnLMf9YzuJhEU1TRVER2wys4A'
-        //         ))
-        //     ));
-        // $res = json_decode(curl_exec($curl));
-
-
-        // dd($curl);
-        // curl_close($curl);
-        return view('user.profile', compact('api'));
+        return view('user.profile', compact('api', 'user'));
     }
 
     /**

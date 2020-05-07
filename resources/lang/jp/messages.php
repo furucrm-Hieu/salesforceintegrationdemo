@@ -1,6 +1,6 @@
-<?php 
+<?php
     //resources/lang/jp/messages.php
-    
+
     return [
         'Edit' => '編集',
         'Delete' => '削除',
@@ -37,5 +37,11 @@
         'Password' => 'パスワード',
         'Welcom_Back' => 'おかえり',
         'None' => '指定なし',
+        'Profile' => 'プロファイル', //
+        'Connect' => '接続', //
+        'Disconnect' => '切断',//
+        'Connected' => '接続中',
+        'Disconnected' => '未接続',//
+        'Status' => 'Salesforce接続ステータス' //
     ];
 ?>
