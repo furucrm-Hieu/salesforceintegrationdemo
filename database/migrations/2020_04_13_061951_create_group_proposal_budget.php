@@ -29,7 +29,7 @@ class CreateGroupProposalBudget extends Migration
             $table->dateTime('approved_at__c');
             $table->longText('details__c');
             $table->double('total_amount__c', 16, 2);
-            $table->string('sfid', 20)->nullable();
+            $table->string('sfid', 50)->nullable();
             $table->timestamps();
         });
 
@@ -38,16 +38,16 @@ class CreateGroupProposalBudget extends Migration
             $table->string('name', 80);
             $table->string('year__c', 4);
             $table->double('total_amount__c', 16, 2);
-            $table->string('sfid', 20)->nullable();
+            $table->string('sfid', 50)->nullable();
             $table->timestamps();
         });
 
         Schema::create('proposal_budget__c', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('proposal__c');
-            $table->integer('budget__c');
+            $table->string('proposal__c', 50);
+            $table->string('budget__c', 50);
             $table->double('amount__c', 16, 2);
-            $table->string('sfid', 20)->nullable();
+            $table->string('sfid', 50)->nullable();
             $table->timestamps();
         });
 

@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Proposal;
 use App\Models\Budget;
 use App\Models\ProposalBudget;
+use App\Models\ApiConnect;
 use App\Helpers\HelperHandleTotalAmount;
+use App\Helpers\HelperGuzzleService;
 use DB, Session;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -19,12 +21,15 @@ class ProposalBudgetController extends Controller
     protected $mBudget;
     protected $mProposalBudget;
     protected $hHelperHandleTotalAmount;
+    protected $hHelperGuzzleService;
 
-    public function __construct(Proposal $mProposal, ProposalBudget $mProposalBudget, Budget $mBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount) {
+    public function __construct(Proposal $mProposal, ProposalBudget $mProposalBudget, Budget $mBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
         $this->mProposal = $mProposal;
         $this->mBudget = $mBudget;
         $this->mProposalBudget = $mProposalBudget;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
+        $this->hHelperGuzzleService = $hHelperGuzzleService;
+        $this->vApiConnect = ApiConnect::latest()->first();
     }
 
     /**
@@ -69,13 +74,38 @@ class ProposalBudgetController extends Controller
             $requestData['budget__c'] = $request->input('budget__c');
             $requestData['proposal__c'] = $request->input('proposal__c');
             $requestData['amount__c'] = $request->input('amount');
-            $requestData['external_id__c'] = uniqid(Str::random(5));
 
             $proposalBudget = $this->mProposalBudget->create($requestData);
 
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+
+                $dataProBud = [];
+                $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
+                $dataProBud['Budget__c'] = $proposalBudget->budget__c;
+                $dataProBud['Amount__c'] = $proposalBudget->amount__c;
+
+                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal_Budget__c/', $this->vApiConnect->accessToken, $dataProBud);
+                $response = json_decode($response);
+                
+                if(isset($response->success) && $response->success == true) {
+                    $proposalBudget->update(['sfid' => $response->id]);
+                }else if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+
+                        $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal_Budget__c/', $access_token, $dataProBud);
+                        $response1 = json_decode($response1);
+                        if(isset($response1->success) && $response1->success == true) {
+                            $proposalBudget->update(['sfid' => $response1->id]);
+                        }
+                    }
+                }
+            }
+
+            // $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
             
             if($request->input('typeRedirect') == 'budget') {
                 $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
@@ -190,7 +220,27 @@ class ProposalBudgetController extends Controller
 
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+
+                $dataProBud = [];
+                $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
+                $dataProBud['Budget__c'] = $proposalBudget->budget__c;
+                $dataProBud['Amount__c'] = $proposalBudget->amount__c;
+
+                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken, $dataProBud);
+                $response = json_decode($response);
+
+                if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+                        $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $access_token, $dataProBud);
+                    }
+                }
+            }
+
+            //$this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
 
             if($request->input('typeRedirect') == 'budget') {
                 $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
@@ -223,7 +273,22 @@ class ProposalBudgetController extends Controller
             $budget__c = $proposalBudget->budget__c;
             $proposalBudget->delete();
             DB::commit();
-            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposal__c, $budget__c);
+
+            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken);
+
+                $response = json_decode($response);
+                if(isset($response->success) && $response->success == false) {
+                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                    
+                    if(json_decode($resFreshToken)->success == true){
+                        $access_token = json_decode($resFreshToken)->access_token;
+                        $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $access_token);
+                    }
+                }
+            }
+
+            //$this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposal__c, $budget__c);
             return response()->json(['success' => true]);
         }catch(\Exception $ex) {
             Log::info($ex->getMessage(). ' Destroy - ProposalBudgetController');
