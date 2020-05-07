@@ -37,10 +37,11 @@
         'Password' => 'Password',
         'Welcom_Back' => 'Welcome Back',
         'None' => 'None',
-        'Profile' => 'Profile', //
-        'Connect' => 'Connect', //
-        'Disconnect' => 'Disconnect',//
-        'Disconnected' => 'Disconnected',//
-        'Status' => 'Salesforce connect status' //
+        'Profile' => 'Profile',
+        'Connect' => 'Connect',
+        'Disconnect' => 'Disconnect',
+        'Connected' => 'Connected',
+        'Disconnected' => 'Disconnected',
+        'Status' => 'Salesforce connect status'
     ];
 ?>

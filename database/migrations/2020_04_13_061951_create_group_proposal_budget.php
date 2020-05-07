@@ -27,7 +27,7 @@ class CreateGroupProposalBudget extends Migration
             $table->string('year__c', 4);
             $table->dateTime('proposed_at__c');
             $table->dateTime('approved_at__c');
-            $table->longText('details__c');
+            $table->longText('details__c')->nullable();
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
             $table->timestamps();
