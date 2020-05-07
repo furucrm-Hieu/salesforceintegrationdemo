@@ -24,7 +24,7 @@
                 <a class="btn btn-block btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
               </div>
               <div class="col-sm-1" >
-                <button type="button" class="btn btn-block btn-primary" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
+                <button type="button" class="btn btn-block btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
               </div>
               <div class="col-sm-5" ></div>
             </div>

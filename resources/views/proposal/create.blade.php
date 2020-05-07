@@ -53,6 +53,17 @@
       });
 
     })
+
+    function checkConnectSf() {     
+      if(!$('#createform')[0].checkValidity()) {
+        $("#createform")[0].reportValidity();
+      }
+      else {
+        if (confirm("Your application is not connected to salesforce, are you sure to submit?")){
+          $("#createform").submit();
+        }      
+      }     
+    }
   </script>
   
 @endsection

@@ -34,9 +34,9 @@
                             <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) ? 'btn-danger' : 'btn-success' }}">
                                 {{ !isset($api) ? __('messages.Connect')  : __('messages.Disconnect')}}
                             </a>
-                             <a href="{{ route('refreshToken') }}" class="btn btn-block {{ isset($api) ? 'btn-success' : 'btn-danger' }}">
+                            <!-- <a href="{{ route('refreshToken') }}" class="btn btn-block {{ isset($api) ? 'btn-success' : 'btn-danger' }}">
                                 {{ !isset($api) ? __('messages.Connect')  : __('messages.Disconnect')}}
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </div>

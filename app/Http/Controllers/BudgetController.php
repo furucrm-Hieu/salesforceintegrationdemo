@@ -47,7 +47,8 @@ class BudgetController extends Controller
      */
     public function create(Request $request)
     {   
-        return view('budget.create');
+        $apiConnect = $this->vApiConnect;
+        return view('budget.create', compact('apiConnect'));
     }
 
     /**
@@ -80,7 +81,6 @@ class BudgetController extends Controller
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
-                $dataBudget['Total_Amount__c'] = 0;
 
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', $this->vApiConnect->accessToken, $dataBudget);
                 $response = json_decode($response);
@@ -118,6 +118,7 @@ class BudgetController extends Controller
     public function show($id)
     {
         try {
+
             $budget = $this->mBudget->findOrFail($id);
 
             if($budget->sfid == null) {
@@ -143,9 +144,11 @@ class BudgetController extends Controller
     public function edit($id)
     {
         try {
+            
+            $apiConnect = $this->vApiConnect;
             $budget = $this->mBudget->findOrFail($id);
 
-            return view('budget.create', ['budget' => $budget]);
+            return view('budget.create', ['budget' => $budget, 'apiConnect' => $apiConnect]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Edit - BudgetController');
             abort(404);
@@ -217,7 +220,7 @@ class BudgetController extends Controller
             $listProposalBudget = $this->mProposalBudget->where('budget__c', $budget->sfid)->delete();
             $budget->delete();
             DB::commit();
-            //$this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('budget');
+            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('budget');
             
             if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken);

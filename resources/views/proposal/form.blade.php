@@ -65,6 +65,10 @@
 </div>
 
 <div class="box-footer button-footer">
-  <button type="submit" id="submit" class="btn btn-info">@lang("messages.Submit")</button>
+  @if($apiConnect)
+    <button type="submit" id="submit" class="btn btn-info">@lang("messages.Submit")</button>
+  @else
+    <button type="button" onclick="checkConnectSf()" class="btn btn-info">@lang("messages.Submit")</button>
+  @endif
   <a href="{{ isset($proposal) ? url('proposal/'.$proposal->id) : url('proposal')}}" class="btn btn-default">@lang("messages.Cancel")</a>
 </div>

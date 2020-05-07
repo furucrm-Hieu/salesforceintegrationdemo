@@ -34,6 +34,17 @@
       });
 
     })
+
+    function checkConnectSf() {     
+      if(!$('#budgetform')[0].checkValidity()) {
+        $("#budgetform")[0].reportValidity();
+      }
+      else {
+        if (confirm("Your application is not connected to salesforce, are you sure to submit?")){
+          $("#budgetform").submit();
+        }      
+      }     
+    }
   </script>
   
 @endsection

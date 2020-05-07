@@ -18,8 +18,7 @@ class Proposal extends Model
     ];
 
     public function budget() {
-        return $this->belongsToMany('App\Models\Budget', 'proposal_budget', 'proposal_id', 'budget_id')
-                            ->withPivot('proposal_id', 'budget_id', 'amount');
+        return $this->belongsToMany('App\Models\Budget', 'proposal_budget', 'proposal_id', 'budget_id')->withPivot('proposal_id', 'budget_id', 'amount');
     }
 
     public function proposal_budget() {

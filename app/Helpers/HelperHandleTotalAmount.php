@@ -31,8 +31,9 @@ class HelperHandleTotalAmount
       
       DB::commit();
 
-    }catch(Exception $ex) {
+    }catch(\Exception $ex) {
       DB::rollback();
+      Log::info($ex->getMessage().'- caseCreateDeleteJunction - HelperHandleTotalAmount');
     }   
   }
 
@@ -63,8 +64,9 @@ class HelperHandleTotalAmount
       
       DB::commit();
 
-    }catch(Exception $ex) {
+    }catch(\Exception $ex) {
       DB::rollback();
+      Log::info($ex->getMessage().'- caseDeleteParentOrJunction - HelperHandleTotalAmount');
     }   
   }
 
