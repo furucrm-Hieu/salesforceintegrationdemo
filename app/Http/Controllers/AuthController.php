@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use App;
+use App\Models\ApiConnect;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -44,5 +46,21 @@ class AuthController extends Controller
         App::setLocale($locale);
         session()->put('locale', $locale);
         return response()->json(['success' => true]);
+    }
+
+    public function userProfile() {
+        $uri = config('authenticate.api_uri');
+        $user = User::findorFail(Auth::user()->id);
+        $api = ApiConnect::latest()->first();
+        if(isset($api)) {
+            $reponse = Http::withHeaders([
+                'Authorization' => 'Bearer '.$api->accessToken,
+            ])->get($uri.'/services/data/v48.0/sobjects/Proposal__c');
+            if($reponse->status() != 200) {
+                $api->expried = true;
+                $api->save();
+            }
+        }
+        return view('user.profile', compact('api', 'user'));
     }
 }

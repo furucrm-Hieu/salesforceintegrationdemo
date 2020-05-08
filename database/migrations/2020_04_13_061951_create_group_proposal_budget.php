@@ -17,7 +17,8 @@ class CreateGroupProposalBudget extends Migration
             $table->increments('id');
             $table->string('accessToken')->nullable();
             $table->string('refreshToken')->nullable();
-            $table->enum('status', array('Synced', 'Disconnected'))->default('Disconnected');
+            $table->boolean('expried')->default('false');
+            //$table->enum('expried', array('Synced', 'Disconnected'))->default('Synced');
             $table->timestamps();
         });
 

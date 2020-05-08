@@ -57,9 +57,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findorFail(Auth::user()->id);
-        $api = $this->apiConnect->latest()->first();
-        return view('user.profile', compact('api', 'user'));
+        //
     }
 
     /**

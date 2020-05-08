@@ -28,15 +28,15 @@
                 <div class="row" style="height: 200px;">
                     <div class="centered">
                         <div class="col-xs-6 col-xs-offset-3" style="text-align: center; margin-bottom:10px">
-                            <h4>@lang('messages.Status'): {{ isset($api) ? __('messages.Connected')  : __('messages.Disconnected') }}</h4>
+                            <h4>@lang('messages.Status'): {{ isset($api) ? $api->expried ? __('messages.Disconnected') :  __('messages.Connected') : __('messages.Disconnected') }}</h4>
                         </div>
                         <div class="col-xs-6 col-xs-offset-3">
-                            <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) ? 'btn-danger' : 'btn-success' }}">
-                                {{ !isset($api) ? __('messages.Connect')  : __('messages.Disconnect')}}
+                            <a href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) ? $api->expried ? 'btn-success' : 'btn-danger' : 'btn-success' }}">
+                                {{ !isset($api) ? __('messages.Connect')  : $api->expried ? __('messages.Connect') : __('messages.Disconnect')  }}
                             </a>
-                             <a href="{{ route('refreshToken') }}" class="btn btn-block {{ isset($api) ? 'btn-success' : 'btn-danger' }}">
+                             {{-- <a href="{{ route('refreshToken') }}" class="btn btn-block {{ isset($api) ? 'btn-success' : 'btn-danger' }}">
                                 {{ !isset($api) ? __('messages.Connect')  : __('messages.Disconnect')}}
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
                 </div>
@@ -44,4 +44,18 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('JS')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if({{ json_encode(isset($api->expried) && $api->expried ?? false) }}) {
+                if(window.confirm("@lang('messages.Alert_Token_Expired')")) {
+                    let refreshToken = document.createElement('A');
+                    refreshToken.setAttribute('href', "{{ route('refreshToken') }}");
+                    refreshToken.click();
+                };
+            }
+        });
+    </script>
 @endsection

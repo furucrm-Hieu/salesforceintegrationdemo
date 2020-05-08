@@ -17,8 +17,8 @@ Route::group(['middleware' => ['checkAuth']], function() {
     Route::resource('/proposal', 'ProposalController');
     Route::resource('/budget', 'BudgetController');
     Route::resource('/proposalbudget', 'ProposalBudgetController');
-    Route::resource('/user', 'UserController');
     Route::get('lang/{locale}', 'AuthController@changeLocalization');
+    Route::get('/profile', 'AuthController@userProfile')->name('profile');
     Route::prefix('oauth2') ->group(function() {
         Route::get('/authSalesforce', 'ApiController@authSalesforce')->name('authSalesforce');
         Route::get('/callback', 'ApiController@callback')->name('callback');

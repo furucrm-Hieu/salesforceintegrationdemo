@@ -37,11 +37,11 @@
         'Password' => 'パスワード',
         'Welcom_Back' => 'おかえり',
         'None' => '指定なし',
-        'Profile' => 'プロファイル', //
-        'Connect' => '接続', //
-        'Disconnect' => '切断',//
+        'Profile' => 'プロファイル',
+        'Connect' => '接続',
+        'Disconnect' => '切断',
         'Connected' => '接続中',
-        'Disconnected' => '未接続',//
-        'Status' => 'Salesforce接続ステータス' //
+        'Disconnected' => '未接続',
+        'Status' => 'Salesforce接続ステータス'
     ];
 ?>

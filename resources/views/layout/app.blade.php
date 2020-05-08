@@ -80,12 +80,9 @@
             </a>
             <ul class="dropdown-menu" style="width: 20px; min-width: 87px !important;">
                 <li class="footer">
-                    <a href="{{ route('user.show', [ 'user' => Auth::user()->id]) }}">@lang('messages.Profile')</a>
+                    <a href="{{ route('profile') }}" class="btn btn-default">@lang('messages.Profile')</a>
+                    <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="btn btn-default">@lang('messages.Sign_Out')</a>
                 </li>
-              <li class="footer">
-                <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">@lang('messages.Sign_Out')</a>
-              </li>
-
             </ul>
           </li>
 
