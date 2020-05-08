@@ -51,13 +51,13 @@
               @php $locale = (!empty(session()->get('locale'))) ? session()->get('locale') : 'jp'; @endphp
               @switch($locale)
                 @case('en')
-                  <img width="18px" src="{{asset('image/flag-us.png')}}"> English
+                  <img width="20px" src="{{asset('image/flag-us.png')}}"> English
                 @break
                 @case('jp')
-                  <img width="18px" src="{{asset('image/flag-jp.png')}}"> 日本語
+                  <img width="20px" src="{{asset('image/flag-jp.png')}}"> 日本語
                 @break
                 @default
-                  <img width="18px" src="{{asset('image/flag-jp.png')}}"> 日本語
+                  <img width="20px" src="{{asset('image/flag-jp.png')}}"> 日本語
               @endswitch
             </a>
             <ul class="dropdown-menu" style="width: 20px; min-width: 87px !important;">
