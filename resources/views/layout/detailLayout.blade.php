@@ -57,7 +57,8 @@
       event.preventDefault();
       var r = confirm(tranlateConfirm);
       if (r == true) {
-          $('#delete-form').submit();
+        $('#overlay').fadeIn()
+        $('#delete-form').submit();
       }
     }
   </script>

@@ -151,6 +151,7 @@
 
       var r = confirm(tranlateConfirm);
       if (r == true) {
+        $('#overlay').fadeIn();
         $('#delete-form').submit();
       }
     }

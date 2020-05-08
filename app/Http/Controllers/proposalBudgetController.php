@@ -80,7 +80,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
 
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -119,7 +119,7 @@ class ProposalBudgetController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ProposalBudgetController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -221,7 +221,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
 
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -253,7 +253,7 @@ class ProposalBudgetController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalBudgetController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -273,7 +273,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
 
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);

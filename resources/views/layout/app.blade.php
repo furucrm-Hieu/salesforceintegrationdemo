@@ -18,25 +18,17 @@
   <link rel="stylesheet" href="{{asset('css/app.css')}}">
 
   @yield('CSS')
-  <style type="text/css">
-    .is-active {
-      border: 1px solid #000;
-      background-color: #0779e4;
-      padding: 10px;
-    }
 
-    @media (max-width: 767px) {
-      .content-wrapper {
-        margin-top: 50px;
-      }
-    }
-
-  </style>
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<div id="overlay" style="display:none;">
+  <div class="spinner"></div>
+  <br/>
+  @lang('messages.Loading')...
+</div>
 <div class="wrapper">
 
   <header class="main-header">
@@ -56,7 +48,7 @@
 
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              @php $locale = session()->get('locale'); @endphp
+              @php $locale = (!empty(session()->get('locale'))) ? session()->get('locale') : 'jp'; @endphp
               @switch($locale)
                 @case('en')
                   <img width="18px" src="{{asset('image/flag-us.png')}}"> English
@@ -69,8 +61,8 @@
               @endswitch
             </a>
             <ul class="dropdown-menu" style="width: 20px; min-width: 87px !important;">
-              <li class="footer"><a href="javascript:void(0)" onclick="changeLocalization(event, 'jp')"><img src="{{asset('image/flag-jp.png')}}"> 日本語</a></li>
-              <li class="footer"><a href="javascript:void(0)" onclick="changeLocalization(event, 'en')"><img src="{{asset('image/flag-us.png')}}"> English</a></li>
+              <li class="footer"><a href="javascript:void(0)" onclick="changeLocalization(event, 'jp')"><img width="20px" src="{{asset('image/flag-jp.png')}}"> 日本語</a></li>
+              <li class="footer"><a href="javascript:void(0)" onclick="changeLocalization(event, 'en')"><img width="20px" src="{{asset('image/flag-us.png')}}"> English</a></li>
             </ul>
           </li>
 
@@ -78,11 +70,13 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               {{Auth::user()->name}}
             </a>
-            <ul class="dropdown-menu" style="width: 20px; min-width: 87px !important;">
-                <li class="footer">
-                    <a href="{{ route('profile') }}" class="btn btn-default">@lang('messages.Profile')</a>
-                    <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="btn btn-default">@lang('messages.Sign_Out')</a>
-                </li>
+            <ul class="dropdown-menu" style="width: 20px; min-width: 100px !important;">
+              <li class="footer">
+                <a href="{{ route('profile') }}">@lang('messages.Profile')</a>
+              </li>
+              <li class="footer">
+                <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('logout-form').submit();">@lang('messages.Sign_Out')</a>
+              </li>
             </ul>
           </li>
 
@@ -129,6 +123,7 @@
   var curLocale = '{!! $locale !!}';
   var tranlateConfirm = "{{ __('messages.Confirm_delete') }}";
   var dataLanguage = (curLocale == 'en') ? en_datatable : jp_datatable;
+  var systemError = "{{ __('messages.System_Error') }}";
 
   function changeLocalization(event, locale) {
     event.preventDefault();
@@ -137,6 +132,7 @@
       return false;
     }
 
+    $('#overlay').fadeIn();
     $.ajax({
       url: base_url + '/lang/' + locale,
       type: 'GET',
@@ -145,11 +141,13 @@
           location.reload();
         }
         else {
-          alert('Error, Please contact Admin');
+          $('#overlay').fadeOut();
+          alert(systemError);
         }
       },
       error: function (res) {
-        alert('Error, Please contact Admin');
+        $('#overlay').fadeOut();
+        alert(systemError);
       }
     });
 
@@ -160,6 +158,7 @@
 
     var r = confirm(tranlateConfirm);
     if (r == true) {
+      $('#overlay').fadeIn();
       $.ajax({
         url: base_url + '/' + link + '/' + id,
         type: 'POST',
@@ -169,11 +168,13 @@
             location.reload();
           }
           else {
-            alert('Error, Please contact Admin');
+            $('#overlay').fadeOut();
+            alert(systemError);
           }
         },
         error: function (res) {
-          alert('Error, Please contact Admin');
+          $('#overlay').fadeOut();
+          alert(systemError);
         }
       });
     }

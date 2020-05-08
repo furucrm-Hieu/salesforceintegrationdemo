@@ -14,7 +14,51 @@
 }
 
 .bt-center-dt {
-	/*margin-bottom: -45px;*/
-    z-index: 9999;
-    position: relative;
+	z-index: 1;
+	position: relative;
+}
+
+.is-active {
+    border: 1px solid #000;
+    background-color: #0779e4;
+    padding: 10px;
+}
+
+#overlay {
+  background: #e9e9e9;
+  color: #666666;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 5000;
+  top: 0;
+  left: 0;
+  float: left;
+  text-align: center;
+  padding-top: 20%;
+  opacity: .80;
+}
+
+.spinner {
+    margin: 0 auto;
+    height: 64px;
+    width: 64px;
+    animation: rotate 0.8s infinite linear;
+    border: 5px solid firebrick;
+    border-right-color: transparent;
+    border-radius: 50%;
+}
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 767px) {
+    .content-wrapper {
+      margin-top: 50px;
+    }
 }

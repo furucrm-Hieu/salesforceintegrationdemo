@@ -43,6 +43,8 @@
         'Disconnected' => 'Disconnected',
         'Status' => 'Salesforce connect status',
         'Connected' => 'Connected',
+        'Loading' => 'Loading',
+        'System_Error' => 'System error, Please contact admin',
         'Alert_Token_Expired' => 'Your token expired you want to refresh token'
     ];
 ?>

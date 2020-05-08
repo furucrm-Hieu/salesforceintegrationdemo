@@ -42,6 +42,9 @@
         'Disconnect' => '切断',
         'Connected' => '接続中',
         'Disconnected' => '未接続',
-        'Status' => 'Salesforce接続ステータス'
+        'Status' => 'Salesforce接続ステータス',
+        'Loading' => 'Loading',
+        'System_Error' => 'System error, Please contact admin',
+        'Alert_Token_Expired' => 'Your token expired you want to refresh token'
     ];
 ?>

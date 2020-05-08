@@ -55,7 +55,7 @@ class AuthController extends Controller
         if(isset($api)) {
             $reponse = Http::withHeaders([
                 'Authorization' => 'Bearer '.$api->accessToken,
-            ])->get($uri.'/services/data/v48.0/sobjects/Proposal__c');
+            ])->get($uri.'/Proposal__c');
             if($reponse->status() != 200) {
                 $api->expried = true;
                 $api->save();

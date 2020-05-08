@@ -76,7 +76,7 @@ class BudgetController extends Controller
 
             DB::commit();
             
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
@@ -105,7 +105,7 @@ class BudgetController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - BudgetController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -177,7 +177,7 @@ class BudgetController extends Controller
             
             DB::commit();
 
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
@@ -200,7 +200,7 @@ class BudgetController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - BudgetController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -221,7 +221,7 @@ class BudgetController extends Controller
             DB::commit();
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('budget');
             
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);
@@ -248,7 +248,7 @@ class BudgetController extends Controller
                 return response()->json(['success' => false]);
             }
 
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 

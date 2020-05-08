@@ -30,6 +30,7 @@
     $(function () {
 
       $('#createform').submit(function() {
+        $('#overlay').fadeIn();
         $('#submit').attr('disabled', true);
       });
 

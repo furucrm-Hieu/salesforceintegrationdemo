@@ -85,7 +85,7 @@ class ProposalController extends Controller
 
             DB::commit();
 
-            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataProposal = [];
                 $dataProposal['Name'] = $proposal->name;
@@ -118,7 +118,7 @@ class ProposalController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ProposalController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -203,7 +203,7 @@ class ProposalController extends Controller
 
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
 
                 $dataProposal = [];
                 $dataProposal['Name'] = $proposal->name;
@@ -230,7 +230,7 @@ class ProposalController extends Controller
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalController');
             DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
@@ -251,7 +251,7 @@ class ProposalController extends Controller
             DB::commit();
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->expried == false) {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);
@@ -279,7 +279,7 @@ class ProposalController extends Controller
                 return response()->json(['success' => false]);
             }
 
-            return redirect()->back()->withErrors(['message' => 'System error, Please contact admin'])->withInput();
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
 
