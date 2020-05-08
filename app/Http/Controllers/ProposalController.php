@@ -53,7 +53,8 @@ class ProposalController extends Controller
      */
     public function create(Request $request)
     {   
-        return view('proposal.create');
+        $apiConnect = $this->vApiConnect;
+        return view('proposal.create', compact('apiConnect'));
     }
 
     /**
@@ -65,7 +66,6 @@ class ProposalController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
         try {
 
             $validator = Validator::make($request->all(), $this->validation());
@@ -85,13 +85,12 @@ class ProposalController extends Controller
 
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataProposal = [];
                 $dataProposal['Name'] = $proposal->name;
                 $dataProposal['Year__c'] = $proposal->year__c;
                 $dataProposal['Details__c'] = $proposal->details__c;
-                $dataProposal['Total_Amount__c'] = 0;
                 $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->approved_at__c);
                 $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->proposed_at__c);
 
@@ -132,6 +131,7 @@ class ProposalController extends Controller
     public function show($id)
     {
         try {
+
             $proposal = $this->mProposal::findOrFail($id);
 
             if($proposal->sfid == null) {
@@ -144,6 +144,7 @@ class ProposalController extends Controller
             }
             
             return view('proposal.show', compact('proposal', 'listBudget'));
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - ProposalController');
             abort(404);
@@ -159,9 +160,12 @@ class ProposalController extends Controller
     public function edit($id)
     {
         try {
+
+            $apiConnect = $this->vApiConnect;
             $proposal = $this->mProposal::findOrFail($id);
 
-            return view('proposal.edit', compact('proposal'));
+            return view('proposal.edit', compact('proposal', 'apiConnect'));
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Edit - ProposalController');
             abort(404);
@@ -178,7 +182,6 @@ class ProposalController extends Controller
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
-
         try {
 
             $validator = Validator::make($request->all(), $this->validation());
@@ -223,6 +226,7 @@ class ProposalController extends Controller
             }
 
             return redirect('proposal/'.$proposal->id);
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalController');
             DB::rollback();
@@ -245,7 +249,7 @@ class ProposalController extends Controller
             $listProposalBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->delete();
             $proposal->delete();
             DB::commit();
-            //$this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
+            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
 
             if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
@@ -266,6 +270,7 @@ class ProposalController extends Controller
             }
 
             return redirect('proposal');
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Destroy - ProposalController');
             DB::rollback();

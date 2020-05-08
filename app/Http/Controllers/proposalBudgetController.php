@@ -61,7 +61,6 @@ class ProposalBudgetController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
         try {
 
             $validator = Validator::make($request->all(), $this->validation());
@@ -79,7 +78,9 @@ class ProposalBudgetController extends Controller
 
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
+
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -105,7 +106,6 @@ class ProposalBudgetController extends Controller
                 }
             }
 
-            // $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
             
             if($request->input('typeRedirect') == 'budget') {
                 $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
@@ -200,7 +200,6 @@ class ProposalBudgetController extends Controller
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
-
         try {
 
             $validator = Validator::make($request->all(), $this->validation());
@@ -220,7 +219,9 @@ class ProposalBudgetController extends Controller
 
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
+
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
 
                 $dataProBud = [];
                 $dataProBud['Proposal__c'] = $proposalBudget->proposal__c;
@@ -239,8 +240,6 @@ class ProposalBudgetController extends Controller
                     }
                 }
             }
-
-            //$this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
 
             if($request->input('typeRedirect') == 'budget') {
                 $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
@@ -269,12 +268,12 @@ class ProposalBudgetController extends Controller
         DB::beginTransaction();
         try{
             $proposalBudget = $this->mProposalBudget::findOrFail($id);
-            $proposal__c = $proposalBudget->proposal__c;
-            $budget__c = $proposalBudget->budget__c;
             $proposalBudget->delete();
             DB::commit();
 
-            if($this->vApiConnect != null && $this->vApiConnect->status == 'Synced') {
+            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
+
+            if($this->vApiConnect && $this->vApiConnect->status == 'Synced') {
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken);
 
                 $response = json_decode($response);
@@ -288,7 +287,6 @@ class ProposalBudgetController extends Controller
                 }
             }
 
-            //$this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposal__c, $budget__c);
             return response()->json(['success' => true]);
         }catch(\Exception $ex) {
             Log::info($ex->getMessage(). ' Destroy - ProposalBudgetController');

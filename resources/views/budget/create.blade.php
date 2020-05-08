@@ -39,7 +39,11 @@
   @if(!empty($budget))
     @method('put')
   @endif
-  <input type="submit" id="submit" class="btn btn-info" value="@lang('messages.Submit')" />
+  @if($apiConnect)
+    <button type="submit" id="submit" class="btn btn-info">@lang("messages.Submit")</button>
+  @else
+    <button type="button" onclick="checkConnectSf()" class="btn btn-info">@lang("messages.Submit")</button>
+  @endif
   <a href="{{ isset($budget) ? url('budget/'.$budget->id) : url('budget')}}" class="btn btn-default">@lang("messages.Cancel")</a>
 </div>
 @stop
