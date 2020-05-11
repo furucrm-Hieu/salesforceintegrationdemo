@@ -45,6 +45,7 @@
         'Connected' => 'Connected',
         'Loading' => 'Loading',
         'System_Error' => 'System error, Please contact admin',
+        'Token_Error' => 'Your application is not connected to salesforce or access token expired',
         'Alert_Token_Expired' => 'Your token expired you want to refresh token'
     ];
 ?>

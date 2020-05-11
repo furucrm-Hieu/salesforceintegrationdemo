@@ -124,6 +124,7 @@
   var tranlateConfirm = "{{ __('messages.Confirm_delete') }}";
   var dataLanguage = (curLocale == 'en') ? en_datatable : jp_datatable;
   var systemError = "{{ __('messages.System_Error') }}";
+  var tokenError = "{{ __('messages.Token_Error') }}";
 
   function changeLocalization(event, locale) {
     event.preventDefault();
@@ -142,7 +143,7 @@
         }
         else {
           $('#overlay').fadeOut();
-          alert(systemError);
+          alert(tokenError);
         }
       },
       error: function (res) {
@@ -169,7 +170,7 @@
           }
           else {
             $('#overlay').fadeOut();
-            alert(systemError);
+            alert(tokenError);
           }
         },
         error: function (res) {

@@ -32,7 +32,7 @@ class ProposalController extends Controller
         $this->hHelperConvertDateTime = $hHelperConvertDateTime;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
         $this->hHelperGuzzleService = $hHelperGuzzleService;
-        $this->vApiConnect = ApiConnect::latest()->first();
+        $this->vApiConnect = ApiConnect::where('expired', false)->latest()->first();
     }
 
     /**
@@ -65,14 +65,57 @@ class ProposalController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
         try {
 
+            // Check validator
             $validator = Validator::make($request->all(), $this->validation());
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            // Flag sfid check insert salesforce true or false.
+            $sfid = '';
+
+            // Check and insert to salesforce.
+            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+
+                $dataProposal = [];
+                $dataProposal['Name'] = $request->input('name');
+                $dataProposal['Year__c'] = $request->input('year');
+                $dataProposal['Details__c'] = $request->input('detail');
+                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('approved_at'));
+                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
+
+                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $this->vApiConnect->accessToken, $dataProposal);
+                $response = json_decode($response);
+                
+                // if insert sf false and status code 401, call again insert.
+                if(isset($response->success) && $response->success == false) {
+                    if($response->statusCode == 401) {
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        if(json_decode($resFreshToken)->success == true){
+                            $access_token = json_decode($resFreshToken)->access_token;
+
+                            $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $access_token, $dataProposal);
+                            $response1 = json_decode($response1); 
+                            if(isset($response1->success) && $response1->success == true) {
+                                // get sf id
+                                $sfid = $response1->id;
+                            }
+                        }    
+                    }
+                } else if (isset($response->success) && $response->success == true) {
+                    // get sf id
+                    $sfid = $response->id;
+                }
+            }
+
+            // Check if sfid till empty, return false.
+            if(empty($sfid)) {
+                return redirect()->back()->withErrors(['message' => __('messages.Token_Error')])->withInput();
+            }
+
+            DB::beginTransaction();
             $requestData = [];
             $requestData['name'] = $request->input('name');
             $requestData['year__c'] = $request->input('year');
@@ -80,40 +123,13 @@ class ProposalController extends Controller
             $requestData['total_amount__c'] = 0;
             $requestData['approved_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('approved_at'));
             $requestData['proposed_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('proposed_at'));
+            $requestData['sfid'] = $sfid;
 
             $proposal = $this->mProposal->create($requestData);
 
             DB::commit();
 
-            if($this->vApiConnect && $this->vApiConnect->expried == false) {
-
-                $dataProposal = [];
-                $dataProposal['Name'] = $proposal->name;
-                $dataProposal['Year__c'] = $proposal->year__c;
-                $dataProposal['Details__c'] = $proposal->details__c;
-                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->approved_at__c);
-                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->proposed_at__c);
-
-                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $this->vApiConnect->accessToken, $dataProposal);
-                $response = json_decode($response);
-                
-                if(isset($response->success) && $response->success == true) {
-                    $proposal->update(['sfid' => $response->id]);
-                }else if(isset($response->success) && $response->success == false) {
-                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-                    if(json_decode($resFreshToken)->success == true){
-                        $access_token = json_decode($resFreshToken)->access_token;
-
-                        $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $access_token, $dataProposal);
-                        $response1 = json_decode($response1);
-                        if(isset($response1->success) && $response1->success == true) {
-                            $proposal->update(['sfid' => $response1->id]);
-                        }
-                    }
-                }
-            }
-
-            return redirect('proposal/'.$proposal->id);
+            return redirect('proposal/'. $proposal->id);
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ProposalController');
@@ -181,17 +197,55 @@ class ProposalController extends Controller
      */
     public function update(Request $request, $id)
     {
-        DB::beginTransaction();
         try {
 
+            // Check validator
             $validator = Validator::make($request->all(), $this->validation());
-
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
             $proposal = $this->mProposal::findOrFail($id);
 
+            // Flag flagUpdate check update salesforce true or false.
+            $flagUpdate = false;
+
+            // Check and update to salesforce.
+            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+                $dataProposal = [];
+                $dataProposal['Name'] = $request->input('name');
+                $dataProposal['Year__c'] = $request->input('year');
+                $dataProposal['Details__c'] = $request->input('detail');
+                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('approved_at'));
+                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
+
+                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken, $dataProposal);
+                $response = json_decode($response);
+
+                if(isset($response->success) && $response->success == false) {
+                    if($response->statusCode == 401) {
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+
+                        if(json_decode($resFreshToken)->success == true){
+                            $access_token = json_decode($resFreshToken)->access_token;
+
+                            $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token, $dataProposal);
+                            $response1 = json_decode($response1); 
+                            if(isset($response1->success) && $response1->success == true) {
+                                $flagUpdate = true;
+                            }
+                        }
+                    }
+                } else if (isset($response->success) && $response->success == true) {
+                    $flagUpdate = true;
+                }
+            }
+
+            if(!$flagUpdate) {
+                return redirect()->back()->withErrors(['message' => __('messages.Token_Error')])->withInput();
+            }
+
+            DB::beginTransaction();
             $requestData = [];
             $requestData['name'] = $request->input('name');
             $requestData['year__c'] = $request->input('year');
@@ -202,28 +256,6 @@ class ProposalController extends Controller
             $proposal->update($requestData);
 
             DB::commit();
-
-            if($this->vApiConnect && $this->vApiConnect->expried == false) {
-
-                $dataProposal = [];
-                $dataProposal['Name'] = $proposal->name;
-                $dataProposal['Year__c'] = $proposal->year__c;
-                $dataProposal['Details__c'] = $proposal->details__c;
-                $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->approved_at__c);
-                $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($proposal->proposed_at__c);
-
-                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken, $dataProposal);
-                $response = json_decode($response);
-
-                if(isset($response->success) && $response->success == false) {
-                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-
-                    if(json_decode($resFreshToken)->success == true){
-                        $access_token = json_decode($resFreshToken)->access_token;
-                        $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token, $dataProposal);
-                    }
-                }
-            }
 
             return redirect('proposal/'.$proposal->id);
 
@@ -242,33 +274,54 @@ class ProposalController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        DB::beginTransaction();
         try {
 
             $proposal = $this->mProposal::findOrFail($id);
+
+            // Flag flagDelete check delete salesforce true or false.
+            $flagDelete = false;
+
+            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+
+                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
+                $response = json_decode($response);
+                
+                if(isset($response->success) && $response->success == false) {
+                    if($response->statusCode == 401) {
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+    
+                        if(json_decode($resFreshToken)->success == true){
+                            $access_token = json_decode($resFreshToken)->access_token;
+                            $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token);
+                            $response1 = json_decode($response1); 
+                            if(isset($response1->success) && $response1->success == true) {
+                                $flagDelete = true;
+                            }
+                        }
+                    }
+                } else if (isset($response->success) && $response->success == true) {
+                    $flagDelete = true;
+                }
+                
+            }
+
+            if(!$flagDelete) {
+                if($request->ajax()){
+                    return response()->json(['success' => false]);
+                }
+                return redirect()->back()->withErrors(['message' => __('messages.Token_Error')])->withInput();
+            }
+
+            DB::beginTransaction();
             $listProposalBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->delete();
             $proposal->delete();
             DB::commit();
+
             $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('proposal');
-
-            if($this->vApiConnect && $this->vApiConnect->expried == false) {
-                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
-
-                $response = json_decode($response);
-                if(isset($response->success) && $response->success == false) {
-                    $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-                    
-                    if(json_decode($resFreshToken)->success == true){
-                        $access_token = json_decode($resFreshToken)->access_token;
-                        $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token);
-                    }
-                }
-            }
 
             if($request->ajax()){
                 return response()->json(['success' => true]);
             }
-
             return redirect('proposal');
 
         } catch (\Exception $ex) {
@@ -278,7 +331,6 @@ class ProposalController extends Controller
             if($request->ajax()){
                 return response()->json(['success' => false]);
             }
-
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }

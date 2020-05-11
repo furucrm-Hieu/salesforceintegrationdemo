@@ -25,7 +25,7 @@ class ApiController extends Controller
         try {
             $api = $this->apiConnect::latest()->first();
             if(isset($api)) {
-                $expired = (bool) $api->expried;
+                $expired = (bool) $api->expired;
                 $api->delete();
                 if($expired) {
                     return $this->authenSalesforce->getCode();
@@ -47,7 +47,7 @@ class ApiController extends Controller
             $token = json_decode($authenSalesforce->refreshToken($api->refreshToken));
             $api->fill([
                 'accessToken' => $token->access_token,
-                'expried' => false
+                'expired' => false
             ]);
             $api->save();
             return redirect()->back();

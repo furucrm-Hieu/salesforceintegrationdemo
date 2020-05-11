@@ -57,7 +57,7 @@ class AuthController extends Controller
                 'Authorization' => 'Bearer '.$api->accessToken,
             ])->get($uri.'/Proposal__c');
             if($reponse->status() != 200) {
-                $api->expried = true;
+                $api->expired = true;
                 $api->save();
             }
         }
