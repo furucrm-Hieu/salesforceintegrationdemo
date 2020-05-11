@@ -8,6 +8,8 @@ use App\Helpers\HelperAuthenticateSalesforce as AuthenSalesforce;
 use App\Models\ApiConnect;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 use function GuzzleHttp\json_decode;
 
 class ApiController extends Controller
@@ -40,39 +42,19 @@ class ApiController extends Controller
         return redirect()->back();
     }
 
-    public function refreshToken() {
-        try {
-            $api = $this->apiConnect::latest()->first();
-            $authenSalesforce = new AuthenSalesforce();
-            $token = json_decode($authenSalesforce->refreshToken($api->refreshToken));
-            $api->fill([
-                'accessToken' => $token->access_token,
-                'expried' => false
-            ]);
-            $api->save();
-            return redirect()->back();
-        } catch (\Exception $ex) {
-            if($ex instanceof RequestException) {
-                if(strpos($ex->response->body() , 'expired access/refresh token')) return $this->authSalesforce();
-            }
-            else {
-                Log::info($ex->getMessage().'- callback - ApiController');
-            }
-            return redirect()->back()->withErrors('error', $ex->getMessage());
-        }
-    }
-
     public function callback(Request $request) {
         try{
             $token = json_decode($this->authenSalesforce->getToken($request->code));
-            $this->apiConnect::create([
-                'accessToken' => $token->access_token,
-                'refreshToken' => $token->refresh_token
-            ]);
+            if(isset($token) && $token->access_token) {
+                $this->apiConnect::create([
+                    'accessToken' => $token->access_token,
+                    'refreshToken' => $token->refresh_token
+                ]);
+            }
         }
         catch(\Exception $ex) {
             Log::info($ex->getMessage().'- callback - ApiController');
         }
-        return redirect()->route('profile', ['user' => Auth::user()->id]);
+        return redirect()->route('profile');
     }
 }

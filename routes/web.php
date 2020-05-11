@@ -22,7 +22,7 @@ Route::group(['middleware' => ['checkAuth']], function() {
     Route::prefix('oauth2') ->group(function() {
         Route::get('/authSalesforce', 'ApiController@authSalesforce')->name('authSalesforce');
         Route::get('/callback', 'ApiController@callback')->name('callback');
-        Route::get('/refreshToken', 'ApiController@refreshToken')->name('refreshToken');
+        // Route::get('/refreshToken', 'ApiController@refreshToken')->name('refreshToken');
     });
 });
 Route::get('', 'AuthController@getLogin');

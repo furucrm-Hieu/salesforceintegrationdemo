@@ -45,6 +45,6 @@
         'Connected' => 'Connected',
         'Loading' => 'Loading',
         'System_Error' => 'System error, Please contact admin',
-        'Alert_Token_Expired' => 'Your token expired you want to refresh token'
+        'Alert_Token_Expired' => 'Your token expired you want to refresh token ?'
     ];
 ?>
