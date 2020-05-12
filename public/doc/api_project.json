@@ -5,8 +5,8 @@
   "title": "Rest Api SalesforceIntegrationDemo Document",
   "order": [
     "OauthSalesforce",
-    "RefreshToken",
     "GetToken",
+    "RefreshToken",
     "InsertProposal",
     "UpdateProposal",
     "DeleteProposal",
@@ -19,14 +19,15 @@
   ],
   "template": {
     "withCompare": true,
-    "withGenerator": true
+    "withGenerator": true,
+    "forceLanguage": "jp"
   },
   "sampleUrl": false,
   "defaultVersion": "0.0.0",
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2020-05-08T07:51:55.286Z",
+    "time": "2020-05-12T09:08:46.354Z",
     "url": "http://apidocjs.com",
     "version": "0.22.1"
   }

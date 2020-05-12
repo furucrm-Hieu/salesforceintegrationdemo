@@ -14,14 +14,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "client_id",
-            "description": "<p>The connected app’s consumer key</p>"
+            "description": "<p>接続アプリケーションのコンシューマ鍵。接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "client_secret",
-            "description": "<p>The connected app’s consumer secret</p>"
+            "description": "<p>接続アプリケーションのコンシューマの秘密。接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。</p>"
           },
           {
             "group": "Parameter",
@@ -31,27 +31,27 @@ define({ "api": [
             ],
             "optional": false,
             "field": "grant_type",
-            "description": "<p>The type of validation that the connected app can provide to prove it's a safe visitor. For the web server flow, the value must be authorization_code.</p>"
+            "description": "<p>安全な訪問者であることを証明するために接続アプリケーションが提供できる検証の種別。Web サーバフローでは、値は authorization_code である必要があります。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "redirect_uri",
-            "description": "<p>The URL where users are redirected after a successful authentication. The redirect URI must match one of the values in the connected app’s Callback URL field</p>"
+            "description": "<p>認証に成功した後にユーザがリダイレクトされる URL。リダイレクト URI は、接続アプリケーションの [コールバック URL] 項目の値のいずれかと一致している必要があります。それ以外の場合、承認は失敗します。リダイレクト URI は、接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。この値は URL エンコードされている必要があります。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "code",
-            "description": "<p>A temporary authorization code received from the authorization server. The connected app uses this code in exchange for an access token</p>"
+            "description": "<p>認証サーバから受信する一時的な認証コード。接続アプリケーションは、アクセストークンと引き換えにこのコードを使用します。この種別の OAuth 2.0 フローは、アクセストークンをアプリケーションに渡すための安全な方法です。</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Example-Request:",
+          "title": "リクエストの例:",
           "content": "https://login.salesforce.com/services/oauth2/token?client_id=3MVG9n_HvETGhr3AmxuR5EwQh8ovnQtPOC8cbZgIALJIstZsYe8fzdDmCbAJjhTmpzF37YFt.3EC.R1VNn1RH&client_secret=F7BCB164BF27401D56FE2D19FCA20312D398A79188F9BA42EF3B78F98BE06A8B&redirect_uri=http://localhost:8000/oauth2/callback&code=aPrx4sgoM2Nd1zWeFVlOWveD0HhYmiDiLmlLnXEBgX01tpVOQMWVSUuafFPHu3kCSjzk4CUTZg==&grant_type=authorization_code",
           "type": "x-www-form-urlencoded"
         }
@@ -65,63 +65,63 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "access_token",
-            "description": "<p>OAuth token that a connected app uses to request access to a protected resource on behalf of the client application. Additional permissions in the form of scopes can accompany the access token.</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションの代わりに保護されたリソースへのアクセスを要求するために使用する OAuth トークン。範囲の形式の追加権限にはアクセストークンが付随することがあります。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "refresh_token",
-            "description": "<p>Token that a connected app uses to obtain new access tokens (sessions). This value is a secret.</p>"
+            "description": "<p>接続アプリケーションが新しいアクセストークン (セッション) を取得するために使用するトークン。この値は秘密です。適切な対策を講じて保護してください。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "signature",
-            "description": "<p>Base64-encoded HMAC-SHA256 signature signed with the client_secret. The signature can include the concatenated ID and issued_at value, which you can use to verify that the identity URL hasn’t changed since the server sent it.</p>"
+            "description": "<p>client_secret で署名されている Base64 エンコードされた HMAC-SHA256 署名。署名には連結 ID と issued_at value を含めることができます。これらを使用して ID URL がサーバから送信された後に変更されていないことを確認できます。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "scope",
-            "description": "<p>A space-separated list of scopes values.Scopes further define the type of protected resources that the client can access. You assign scopes to a connected app when you build it, and they are included with the OAuth tokens during the authorization flow.</p>"
+            "description": "<p>範囲値のスペース区切りのリスト。範囲は、クライアントがアクセスできる保護されたリソースの種別をさらに定義します。接続アプリケーションの作成時に範囲を割り当てると、認証フロー中に OAuth トークンに範囲が含まれます</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "instance_url",
-            "description": "<p>A URL indicating the instance of the user’s org.</p>"
+            "description": "<p>ユーザの組織のインスタンスを示す URL。たとえば、https://yourInstance.salesforce.com/ です。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>Identity URL that can be used to identify the user and to query for more information about the user.</p>"
+            "description": "<p>ユーザを識別し、ユーザの詳細を照会するために使用できる ID URL。「ID URL」を参照してください。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "token_type",
-            "description": "<p>A Bearer token type, which is used for all responses that include an access token.</p>"
+            "description": "<p>Bearer トークン種別。アクセストークンを含むすべての応答で使用します。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "issued_at",
-            "description": "<p>Time stamp of when the signature was created.</p>"
+            "description": "<p>署名が作成されたときのタイムスタンプ。</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Example-Success",
-          "content": "{\n    \"access_token\": \"00D2w000003yx07!ARAAQPA1GOAK6HbT9tvanJTNB1T7ntobhp_bb.PWHnjFtuPy4v7MF5aRbUoZQACrpawr0J615u2ft_85x.CsMkn69VP3qkiI\"\n    \"refresh_token\": \"5Aep861ZBQbtA4s3JUvLPxi.ria2BFrEU4KlP3aY43kyhG47DsmCItTGeaberMQh3Z14LXWl5mIvz0NImlEAb_Q\"\n    \"signature\": \"S49Ohp3XaxR352arJJr/4jmpc+PYefhCAlIAmbFUdh0=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588840929064\"\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 200 Success\n{\n    \"access_token\": \"00D2w000003yx07!ARAAQPA1GOAK6HbT9tvanJTNB1T7ntobhp_bb.PWHnjFtuPy4v7MF5aRbUoZQACrpawr0J615u2ft_85x.CsMkn69VP3qkiI\"\n    \"refresh_token\": \"5Aep861ZBQbtA4s3JUvLPxi.ria2BFrEU4KlP3aY43kyhG47DsmCItTGeaberMQh3Z14LXWl5mIvz0NImlEAb_Q\"\n    \"signature\": \"S49Ohp3XaxR352arJJr/4jmpc+PYefhCAlIAmbFUdh0=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588840929064\"\n}",
           "type": "json"
         }
       ]
@@ -160,14 +160,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "client_id",
-            "description": "<p>The connected app’s consumer key.</p>"
+            "description": "<p>接続アプリケーションのコンシューマ鍵。接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "redirect_uri",
-            "description": "<p>The URL where users are redirected after a successful authentication. The redirect URI must match one of the values in the   connected app’s Callback URL field.</p>"
+            "description": "<p>認証に成功した後にユーザがリダイレクトされる URL。リダイレクト URI は、接続アプリケーションの [コールバック URL] 項目の値のいずれかと一致している必要があります。それ以外の場合、承認は失敗します。リダイレクト URI は、接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。この値は URL エンコードされている必要があります。</p>"
           },
           {
             "group": "Parameter",
@@ -177,13 +177,13 @@ define({ "api": [
             ],
             "optional": false,
             "field": "response_type",
-            "description": "<p>The OAuth 2.0 grant type that the connected app requests.</p>"
+            "description": "<p>接続アプリケーションが要求する OAuth 2.0 許可種別。このフローの値は、接続アプリケーションが認証コードを要求していることを示すには code である必要があります。</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Example-Request:",
+          "title": "リクエストの例:",
           "content": "https://login.salesforce.com/services/oauth2/authorize?client_id=3MVG9n_HvETGhr3AmxuR5EwQh8ovnQtPOC8cbZgIALJIstZsYe8fzdDmCbAJjhTmpzF37YFt.3EC.R1VNn1RH&redirect_uri=http://localhost:8000/oauth2/callback&response_type=code",
           "type": "x-www-form-urlencoded"
         }
@@ -203,8 +203,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Example-Success",
-          "content": "{\n    \"code\": \"aPrx4sgoM2Nd1zWeFVlOWveD0HhYmiDiLmlLnXEBgX01tpVOQMWVSUuafFPHu3kCSjzk4CUTZg==\"\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 200 Success\n{\n    \"code\": \"aPrx4sgoM2Nd1zWeFVlOWveD0HhYmiDiLmlLnXEBgX01tpVOQMWVSUuafFPHu3kCSjzk4CUTZg==\"\n}",
           "type": "json"
         }
       ]
@@ -227,14 +227,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "client_id",
-            "description": "<p>The connected app’s consumer key.</p>"
+            "description": "<p>接続アプリケーションのコンシューマ鍵。接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "client_secret",
-            "description": "<p>The connected app’s consumer secret.</p>"
+            "description": "<p>接続アプリケーションのコンシューマの秘密。接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。</p>"
           },
           {
             "group": "Parameter",
@@ -244,27 +244,27 @@ define({ "api": [
             ],
             "optional": false,
             "field": "grant_type",
-            "description": "<p>The OAuth 2.0 grant type that the connected app requests. The value must be refresh_token for this flow.</p>"
+            "description": "<p>接続アプリケーションが要求する OAuth 2.0 許可種別。このフローの値は refresh_token である必要があります。</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "redirect_uri",
-            "description": "<p>The URL where users are redirected after a successful authentication. The redirect URI must match one of the values in the connected app’s Callback URL field.</p>"
+            "description": "<p>認証に成功した後にユーザがリダイレクトされる URL。リダイレクト URI は、接続アプリケーションの [コールバック URL] 項目の値のいずれかと一致している必要があります。それ以外の場合、承認は失敗します。リダイレクト URI は、接続アプリケーションの [接続アプリケーションを管理する] ページまたは接続アプリケーションの定義から検索できます。この値は URL エンコードされている必要があります</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "refresh_token",
-            "description": "<p>Token that a connected app uses to obtain new access tokens (sessions).</p>"
+            "description": "<p>接続アプリケーションが新しいアクセストークン (セッション) を取得するために使用するトークン。この値は秘密です。適切な対策を講じて保護してください。このパラメータは、refresh_token 範囲を使用して接続アプリケーションが設定されている場合にのみ返されます。</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Example-Request:",
+          "title": "リクエストの例:",
           "content": "https://login.salesforce.com/services/oauth2/token?client_id=3MVG9n_HvETGhr3AmxuR5EwQh8ovnQtPOC8cbZgIALJIstZsYe8fzdDmCbAJjhTmpzF37YFt.3EC.R1VNn1RH&client_secret=F7BCB164BF27401D56FE2D19FCA20312D398A79188F9BA42EF3B78F98BE06A8B&redirect_uri=http://localhost:8000/oauth2/callback&refresh_token= 5Aep861ZBQbtA4s3JUvLPxi.ria2BFrEU4KlP3aY43kyhG47Dt7DRz3qoYaJ1BvoUuTKXBcbnnogJJiKzN7hNtI&grant_type=refresh_token",
           "type": "x-www-form-urlencoded"
         }
@@ -278,56 +278,56 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "access_token",
-            "description": "<p>OAuth token that a connected app uses to request access to a protected resource on behalf of the client application. Additional permissions in the form of scopes can accompany the access token.</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションの代わりに保護されたリソースへのアクセスを要求するために使用する OAuth トークン。範囲の形式の追加権限にはアクセストークンが付随することがあります。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "signature",
-            "description": "<p>Base64-encoded HMAC-SHA256 signature signed with the client_secret. The signature can include the concatenated ID and issued_at value, which you can use to verify that the identity URL hasn’t changed since the server sent it.</p>"
+            "description": "<p>client_secret で署名されている Base64 エンコードされた HMAC-SHA256 署名。署名には連結 ID と issued_at value を含めることができます。これらを使用して ID URL がサーバから送信された後に変更されていないことを確認できます。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "A",
-            "description": "<p>space-separated list of scopes values.Scopes further define the type of protected resources that the client can access. You assign scopes to a connected app when you build it, and they are included with the OAuth tokens during the authorization flow.</p>"
+            "field": "scope",
+            "description": "<p>範囲値のスペース区切りのリスト。範囲は、クライアントがアクセスできる保護されたリソースの種別をさらに定義します。接続アプリケーションの作成時に範囲を割り当てると、認証フロー中に OAuth トークンに範囲が含まれます。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "instance_url",
-            "description": "<p>A URL indicating the instance of the user’s org.</p>"
+            "description": "<p>ユーザの組織のインスタンスを示す URL。たとえば、https://yourInstance.salesforce.com/ です。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>Identity URL that can be used to identify the user and to query for more information about the user.</p>"
+            "description": "<p>ユーザを識別し、ユーザの詳細を照会するために使用できる ID URL。「ID URL」を参照してください。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "token_type",
-            "description": "<p>A Bearer token type, which is used for all responses that include an access token.</p>"
+            "description": "<p>Bearer トークン種別。アクセストークンを含むすべての応答で使用します。</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "issued_at",
-            "description": "<p>Time stamp of when the signature was created.</p>"
+            "description": "<p>署名が作成されたときのタイムスタンプ。</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "Example-Success",
-          "content": "{\n    \"access_token\": \"00D2w000003yx07!ARAAQJxRl8X0NEwRz3.loGLP_iHVd_SBtYlHw__r3KAOsBRIw3havvuUUWu2ieVj0YTP8h5c13TFF5Da.YqDLLslM4RmRXUD\"\n    \"signature\": \"oUb5WGnLtbeGgVHJA0/RKJNbKiBRCZe6fIdy0NqOKyQ=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588841618262\"\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 200 Success\n{\n    \"access_token\": \"00D2w000003yx07!ARAAQJxRl8X0NEwRz3.loGLP_iHVd_SBtYlHw__r3KAOsBRIw3havvuUUWu2ieVj0YTP8h5c13TFF5Da.YqDLLslM4RmRXUD\"\n    \"signature\": \"oUb5WGnLtbeGgVHJA0/RKJNbKiBRCZe6fIdy0NqOKyQ=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588841618262\"\n}",
           "type": "json"
         }
       ]
@@ -337,7 +337,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a082w000000ZiI6AAK",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c/{sfid}",
     "title": "Delete Budget",
     "name": "DeleteBudget",
     "group": "2.Api_Call",
@@ -353,7 +353,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           }
         ]
       }
@@ -361,7 +361,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -372,7 +372,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a082w000000ZiI6AAK",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c/{sfid}",
     "title": "Delete Proposal",
     "name": "DeleteProposal",
     "group": "2.Api_Call",
@@ -388,7 +388,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           }
         ]
       }
@@ -396,7 +396,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -407,7 +407,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a0A2w000001ZzAIEA0",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c/{sfid}",
     "title": "Delete Proposal Budget",
     "name": "DeleteProposalBudget",
     "group": "2.Api_Call",
@@ -423,7 +423,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           }
         ]
       }
@@ -431,7 +431,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -442,7 +442,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Budget__c",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c",
     "title": "Insert Budget",
     "name": "InsertBudget",
     "group": "2.Api_Call",
@@ -458,7 +458,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -488,7 +488,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "4",
-            "optional": false,
+            "optional": true,
             "field": "Year__c",
             "description": ""
           }
@@ -496,7 +496,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
+          "title": "リクエストの例:",
           "content": "{\n    \"Name\": \"Example Budget\",\n    \"Year__c\": \"2020\"\n}",
           "type": "json"
         }
@@ -530,8 +530,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Success-Reponse",
-          "content": "HTTP/1.1 200 Success\n{\n    \"id\": \"a092w000002BUitAAG\",\n    \"success\": true,\n    \"errors\": []\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a092w000002BUitAAG\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
       ]
@@ -541,7 +541,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c",
     "title": "Insert Proposal",
     "name": "InsertProposal",
     "group": "2.Api_Call",
@@ -557,7 +557,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -586,7 +586,7 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Proposed_At__c",
             "description": ""
           },
@@ -594,7 +594,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "4",
-            "optional": false,
+            "optional": true,
             "field": "Year__c",
             "description": ""
           },
@@ -602,14 +602,14 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "255",
-            "optional": false,
+            "optional": true,
             "field": "Details__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Approved_At__c",
             "description": ""
           }
@@ -617,7 +617,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
+          "title": "リクエストの例:",
           "content": "{\n    \"Name\": \"Example Proposal\",\n    \"Proposed_At__c\": \"2020-05-7T12:00:00\",\n    \"Approved_At__c\": \"2020-05-8T12:00:00\",\n    \"Year__c\": \"2020\",\n    \"Details__c\": \"Exapmle detail\"\n}",
           "type": "json"
         }
@@ -651,8 +651,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Success-Reponse",
-          "content": "HTTP/1.1 200 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
       ]
@@ -662,7 +662,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c",
     "title": "Insert Proposal Budget",
     "name": "InsertProposalBudget",
     "group": "2.Api_Call",
@@ -678,7 +678,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -707,21 +707,21 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Budget__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Proposal__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "Double",
-            "optional": false,
+            "optional": true,
             "field": "Amount__c",
             "description": ""
           }
@@ -729,7 +729,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
+          "title": "リクエストの例:",
           "content": "{\n    \"Name\": \"Example Proposal Budget\",\n    \"Budget__c\": \"a092w000002BUitAAG\",\n    \"Proposal__c\": \"a082w000000ZiI6AAK\",\n    \"Amount__c\": \"200\"\n}",
           "type": "json"
         }
@@ -763,8 +763,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Success-Reponse",
-          "content": "HTTP/1.1 200 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
+          "title": "成功の応答",
+          "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
       ]
@@ -774,7 +774,7 @@ define({ "api": [
   },
   {
     "type": "patch",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a092w000002BUitAAG",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c/{sfid}",
     "title": "Update Budget",
     "name": "UpdateBudget",
     "group": "2.Api_Call",
@@ -790,7 +790,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -812,7 +812,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "80",
-            "optional": false,
+            "optional": true,
             "field": "Name",
             "description": ""
           },
@@ -820,7 +820,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "4",
-            "optional": false,
+            "optional": true,
             "field": "Year__c",
             "description": ""
           }
@@ -828,8 +828,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
-          "content": "{\n    \"Name\": \"Update Budget\",\n    \"Year\": \"2020\"\n}",
+          "title": "リクエストの例:",
+          "content": "{\n    \"Name\": \"Update Budget\",\n    \"Year__c\": \"2020\"\n}",
           "type": "json"
         }
       ]
@@ -837,7 +837,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -848,7 +848,7 @@ define({ "api": [
   },
   {
     "type": "patch",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a082w000000ZiI6AAK",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c/{sfid}",
     "title": "Update Proposal",
     "name": "UpdateProposal",
     "group": "2.Api_Call",
@@ -864,7 +864,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -886,14 +886,14 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "80",
-            "optional": false,
+            "optional": true,
             "field": "Name",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Proposed_At__c",
             "description": ""
           },
@@ -901,7 +901,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "4",
-            "optional": false,
+            "optional": true,
             "field": "Year__c",
             "description": ""
           },
@@ -909,14 +909,14 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "255",
-            "optional": false,
+            "optional": true,
             "field": "Details__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Approved_At__c",
             "description": ""
           }
@@ -924,7 +924,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
+          "title": "リクエストの例:",
           "content": "{\n    \"Name\": \"Update Example Proposal\",\n    \"Proposed_At__c\": \"2020-05-9T12:00:00\",\n    \"Approved_At__c\": \"2020-05-10T12:00:00\",\n    \"Year__c\": \"2020\",\n    \"Details__c\": \"Update Exapmle detail\"\n}",
           "type": "json"
         }
@@ -933,7 +933,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -944,7 +944,7 @@ define({ "api": [
   },
   {
     "type": "patch",
-    "url": "https://login.salesforce.com/services/data/v48.0/sobjects/Proposal__c/a0A2w000001ZzAIEA0",
+    "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c/{sfid}",
     "title": "Update Proposal Budget",
     "name": "UpdateProposalBudget",
     "group": "2.Api_Call",
@@ -960,7 +960,7 @@ define({ "api": [
             ],
             "optional": false,
             "field": "Authorization",
-            "description": "<p>Set oauth token that a connected app uses to request access to a protected resource on behalf of the client application</p>"
+            "description": "<p>接続アプリケーションがクライアントアプリケーションに代わって保護されたリソースへのアクセスを要求するために利用するOAuthトークンを設定します</p>"
           },
           {
             "group": "Header",
@@ -982,28 +982,28 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "size": "80",
-            "optional": false,
+            "optional": true,
             "field": "Name",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Budget__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "Proposal__c",
             "description": ""
           },
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "Amount__c",
             "description": ""
           }
@@ -1011,7 +1011,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Request-Example:",
+          "title": "リクエストの例:",
           "content": "{\n    \"Amount__c\": \"200\"\n}",
           "type": "json"
         }
@@ -1020,7 +1020,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "Success-Reponse",
+          "title": "成功の応答",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -1028,33 +1028,5 @@ define({ "api": [
     },
     "filename": "./ApiController.php",
     "groupTitle": "2.Api_Call"
-  },
-  {
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "optional": false,
-            "field": "varname1",
-            "description": "<p>No type.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "varname2",
-            "description": "<p>With type.</p>"
-          }
-        ]
-      }
-    },
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./doc/main.js",
-    "group": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
-    "groupTitle": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
-    "name": ""
   }
 ] });

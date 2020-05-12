@@ -13,7 +13,8 @@ define([
     './locales/tr.js',
     './locales/vi.js',
     './locales/zh.js',
-    './locales/zh_cn.js'
+    './locales/zh_cn.js',
+    './locales/jp.js'
 ], function() {
     var langId = (navigator.language || navigator.userLanguage).toLowerCase().replace('-', '_');
     var language = langId.substr(0, 2);
