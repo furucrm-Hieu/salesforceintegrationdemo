@@ -43,9 +43,8 @@
         'Connected' => '接続中',
         'Disconnected' => '未接続',
         'Status' => 'Salesforce接続ステータス',
-        'Loading' => 'Loading',
-        'System_Error' => 'System error, Please contact admin',
-        'Token_Error' => 'Your application is not connected to salesforce or access token expired',
-        'Alert_Token_Expired' => 'Your token expired you want to refresh token'
+        'Loading' => '読み込み中',
+        'System_Error' => 'システムにてエラーが発生しました。管理者まで問い合わせてください。',
+        'Token_Error' => 'アプリケーションがSalesforceに接続されていないか、アクセストークンの有効期限が切れていました'
     ];
 ?>

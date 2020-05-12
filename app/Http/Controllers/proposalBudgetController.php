@@ -257,6 +257,12 @@ class ProposalBudgetController extends Controller
             }
 
             DB::beginTransaction();
+
+            $oldPB = [
+                'proposal__c' => $proposalBudget->proposal__c,
+                'budget__c' => $proposalBudget->budget__c,
+            ];
+
             $requestData = [];
             $requestData['proposal__c'] = $request->input('proposal__c');
             $requestData['budget__c'] = $request->input('budget__c');
@@ -266,7 +272,7 @@ class ProposalBudgetController extends Controller
 
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('all');
+            $this->hHelperHandleTotalAmount->caseUpdateJunction($oldPB, $proposalBudget->getChanges());
 
             if($request->input('typeRedirect') == 'budget') {
                 $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();

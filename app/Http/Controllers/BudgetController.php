@@ -284,11 +284,13 @@ class BudgetController extends Controller
             }
 
             DB::beginTransaction();
-            $listProposalBudget = $this->mProposalBudget->where('budget__c', $budget->sfid)->delete();
+            $listProposalBudget = $this->mProposalBudget->where('budget__c', $budget->sfid);
+            $arrProposal = $listProposalBudget->pluck('proposal__c')->toArray();
+            $listProposalBudget->delete();
             $budget->delete();
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseDeleteParentOrJunction('budget');
+            $this->hHelperHandleTotalAmount->caseDeleteParent('budget', $arrProposal);
 
             if($request->ajax()){
                 return response()->json(['success' => true]);
