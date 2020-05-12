@@ -41,9 +41,7 @@
         $("#budgetform")[0].reportValidity();
       }
       else {
-        if (confirm("Your application is not connected to salesforce, are you sure to submit?")){
-          $("#budgetform").submit();
-        }      
+        alert(tokenError);
       }     
     }
   </script>

@@ -27,7 +27,7 @@ class ApiController extends Controller
         try {
             $api = $this->apiConnect::latest()->first();
             if(isset($api)) {
-                $expired = (bool) $api->expried;
+                $expired = (bool) $api->expired;
                 $api->delete();
                 if($expired) {
                     return $this->authenSalesforce->getCode();

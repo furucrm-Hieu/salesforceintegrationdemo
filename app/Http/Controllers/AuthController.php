@@ -11,6 +11,7 @@ use App;
 use App\Models\ApiConnect;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -50,23 +51,24 @@ class AuthController extends Controller
     }
 
     public function userProfile() {
+        $uri = config('authenticate.api_uri');
+        $user = User::findorFail(Auth::user()->id);
+        $api = ApiConnect::latest()->first();
         try {
             DB::beginTransaction();
-            $uri = config('authenticate.api_uri');
-            $user = User::findorFail(Auth::user()->id);
-            $api = ApiConnect::latest()->first();
             if(isset($api)) {
                 $reponse = Http::withHeaders([
                     'Authorization' => 'Bearer '.$api->accessToken,
                 ])->get($uri.'/Proposal__c');
-                if($reponse->status() == 401) {
-                    $api->expried = true;
+                if($reponse->status() != 200) {
+                    $api->expired = true;
                     $api->save();
                 }
             }
             DB::commit();
-        } catch (\Exception $ex) {
-           DB::rollback();
+        }catch(\Exception $ex) {
+            Log::info($ex->getMessage().'- Store - AuthController');
+            DB::rollback();
         }
         return view('user.profile', compact('api', 'user'));
     }

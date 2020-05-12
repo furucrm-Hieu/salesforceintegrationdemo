@@ -60,9 +60,7 @@
         $("#createform")[0].reportValidity();
       }
       else {
-        if (confirm("Your application is not connected to salesforce, are you sure to submit?")){
-          $("#createform").submit();
-        }      
+        alert(tokenError);
       }     
     }
   </script>

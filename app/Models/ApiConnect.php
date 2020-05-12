@@ -12,6 +12,6 @@ class ApiConnect extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'accessToken', 'refreshToken', 'expried'
+        'accessToken', 'refreshToken', 'expired'
     ];
 }

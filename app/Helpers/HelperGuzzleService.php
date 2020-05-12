@@ -21,13 +21,18 @@ class HelperGuzzleService
       ])->post($url, $param_data);
 
       if($response->status() == 401) {
-        return '{"success" : false}';
+        return '{"success" : false, "statusCode" : 401}';
       }
 
-      $response = $response->getBody()->getContents();
-      return $response;
+      if($response->status() == 201) {
+        $response = $response->getBody()->getContents();
+        return $response;
+      }
+
+      return '{"success" : false, "statusCode" : 500}';
 
     } catch (\Exception $ex) {
+      return '{"success" : false, "statusCode" : 500}';
       Log::info($ex->getMessage().'- guzzlePost - HelperGuzzleService');
     }
   }
@@ -41,10 +46,17 @@ class HelperGuzzleService
       ])->patch($url, $param_data);
 
       if($response->status() == 401) {
-        return '{"success" : false}';
+        return '{"success" : false, "statusCode" : 401}';
       }
 
+      if($response->status() == 204) {
+        return '{"success" : true}';
+      }
+
+      return '{"success" : false, "statusCode" : 500}';
+
     } catch (\Exception $ex) {
+      return '{"success" : false, "statusCode" : 500}';
       Log::info($ex->getMessage().'- guzzleUpdate - HelperGuzzleService');
     }
   }
@@ -57,10 +69,17 @@ class HelperGuzzleService
       ])->delete($url);
 
       if($response->status() == 401) {
-        return '{"success" : false}';
+        return '{"success" : false, "statusCode" : 401}';
       }
 
+      if($response->status() == 204) {
+        return '{"success" : true}';
+      }
+
+      return '{"success" : false, "statusCode" : 500}';
+
     } catch (\Exception $ex) {
+      return '{"success" : false, "statusCode" : 500}';
       Log::info($ex->getMessage().'- guzzleDelete - HelperGuzzleService');
     }
   }
