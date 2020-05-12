@@ -60,14 +60,14 @@ class AuthController extends Controller
                 $reponse = Http::withHeaders([
                     'Authorization' => 'Bearer '.$api->accessToken,
                 ])->get($uri.'/Proposal__c');
-                if($reponse->status() != 200) {
+                if($reponse->status() == 401) {
                     $api->expired = true;
                     $api->save();
                 }
             }
             DB::commit();
         }catch(\Exception $ex) {
-            Log::info($ex->getMessage().'- Store - AuthController');
+            Log::info($ex->getMessage().'- userProfile - AuthController');
             DB::rollback();
         }
         return view('user.profile', compact('api', 'user'));
