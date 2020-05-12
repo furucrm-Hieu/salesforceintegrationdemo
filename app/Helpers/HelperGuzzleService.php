@@ -21,18 +21,18 @@ class HelperGuzzleService
       ])->post($url, $param_data);
 
       if($response->status() == 401) {
-        return '{"success" : false, "statusCode" : 401}';
+        return json_decode('{"success" : false, "statusCode" : 401}');
       }
 
       if($response->status() == 201) {
         $response = $response->getBody()->getContents();
-        return $response;
+        return json_decode($response);
       }
 
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
 
     } catch (\Exception $ex) {
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
       Log::info($ex->getMessage().'- guzzlePost - HelperGuzzleService');
     }
   }
@@ -46,17 +46,17 @@ class HelperGuzzleService
       ])->patch($url, $param_data);
 
       if($response->status() == 401) {
-        return '{"success" : false, "statusCode" : 401}';
+        return json_decode('{"success" : false, "statusCode" : 401}');
       }
 
       if($response->status() == 204) {
-        return '{"success" : true}';
+        return json_decode('{"success" : true}');
       }
 
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
 
     } catch (\Exception $ex) {
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
       Log::info($ex->getMessage().'- guzzleUpdate - HelperGuzzleService');
     }
   }
@@ -69,17 +69,17 @@ class HelperGuzzleService
       ])->delete($url);
 
       if($response->status() == 401) {
-        return '{"success" : false, "statusCode" : 401}';
+        return json_decode('{"success" : false, "statusCode" : 401}');
       }
 
       if($response->status() == 204) {
-        return '{"success" : true}';
+        return json_decode('{"success" : true}');
       }
 
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
 
     } catch (\Exception $ex) {
-      return '{"success" : false, "statusCode" : 500}';
+      return json_decode('{"success" : false, "statusCode" : 500}');
       Log::info($ex->getMessage().'- guzzleDelete - HelperGuzzleService');
     }
   }
@@ -103,10 +103,10 @@ class HelperGuzzleService
       $api->save();
       DB::commit();
 
-      return '{"success" : true, "access_token" : "'.$token->access_token.'"}';
+      return json_decode('{"success" : true, "access_token" : "'.$token->access_token.'"}');
     } catch (\Exception $ex) {
       DB::rollback();
-      return '{"success" : false}';
+      return json_decode('{"success" : false}');
     }
   }
   

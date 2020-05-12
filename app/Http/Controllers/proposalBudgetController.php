@@ -79,25 +79,25 @@ class ProposalBudgetController extends Controller
                 $dataProBud['Amount__c'] = $request->input('amount');
     
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal_Budget__c/', $this->vApiConnect->accessToken, $dataProBud);
-                $response = json_decode($response);
                 
                 // if insert sf false and status code 401, call again insert.
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
+
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal_Budget__c/', $access_token, $dataProBud);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
-                                // get sf id
+                                // set sf id
                                 $sfid = $response1->id;
                             }
                         }    
                     }
                 } else if (isset($response->success) && $response->success == true) {
-                    // get sf id
+                    // set sf id
                     $sfid = $response->id;
                 }
             }
@@ -193,8 +193,8 @@ class ProposalBudgetController extends Controller
             }
 
             $proposalBudget = $this->mProposalBudget::findOrFail($dataCheckType[1]);
-            $proposals = $this->mProposal::whereNotNull('sfid')->orderBy('name')->get()->pluck('name','sfid');
-            $budgets = $this->mBudget::whereNotNull('sfid')->orderBy('name')->get()->pluck('name','sfid');
+            $proposals = $this->mProposal::whereNotNull('sfid')->orderBy('name')->get()->pluck('name', 'sfid');
+            $budgets = $this->mBudget::whereNotNull('sfid')->orderBy('name')->get()->pluck('name', 'sfid');
 
             return view('proposal_budget.edit', compact('proposalBudget', 'proposals', 'budgets', 'typeRedirect'));
         } catch (\Exception $ex) {
@@ -232,16 +232,16 @@ class ProposalBudgetController extends Controller
                 $dataProBud['Amount__c'] = $request->input('amount');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken, $dataProBud);
-                $response = json_decode($response);
 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $access_token, $dataProBud);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagUpdate = true;
                             }
@@ -303,16 +303,16 @@ class ProposalBudgetController extends Controller
             if($this->vApiConnect && $this->vApiConnect->expired == false) {
 
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken);
-                $response = json_decode($response);
                 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
     
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
+
                             $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $access_token);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagDelete = true;
                             }

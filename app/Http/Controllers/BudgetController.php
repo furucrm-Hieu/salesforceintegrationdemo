@@ -78,27 +78,28 @@ class BudgetController extends Controller
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
 
+                // Call api insert budget.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', $this->vApiConnect->accessToken, $dataBudget);
-                $response = json_decode($response);
                 
-                // if insert sf false and status code 401, call again insert.
+                // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
+                    // if status code 401, call again insert
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
 
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', $access_token, $dataBudget);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
-                                // get sf id
+                                // set sf id
                                 $sfid = $response1->id;
                             }
                         }    
                     }
                 } else if (isset($response->success) && $response->success == true) {
-                    // get sf id
+                    // set sf id
                     $sfid = $response->id;
                 }
             }
@@ -138,13 +139,7 @@ class BudgetController extends Controller
         try {
 
             $budget = $this->mBudget->findOrFail($id);
-
-            if($budget->sfid == null) {
-                $proposal_budget = [];
-            }else {
-                $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)
-                    ->with('proposal')->get();
-            }
+            $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
             
             return view('budget.detail', ['budget' => $budget, 'proposal' => $proposal_budget]);
         } catch (\Exception $ex) {
@@ -202,17 +197,16 @@ class BudgetController extends Controller
                 $dataBudget['Year__c'] = $request->input('year__c');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken, $dataBudget);
-                $response = json_decode($response);
 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
 
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $access_token, $dataBudget);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagUpdate = true;
                             }
@@ -261,17 +255,16 @@ class BudgetController extends Controller
             if($this->vApiConnect && $this->vApiConnect->expired == false) {
 
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken);
-                $response = json_decode($response);
 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
     
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
                             
                             $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $access_token);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagDelete = true;
                             }

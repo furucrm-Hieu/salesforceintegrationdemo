@@ -76,7 +76,7 @@ class ProposalController extends Controller
             // Flag sfid check insert salesforce true or false.
             $sfid = '';
 
-            // Check and insert to salesforce.
+            // Check access token in database is exist.
             if($this->vApiConnect && $this->vApiConnect->expired == false) {
 
                 $dataProposal = [];
@@ -86,26 +86,29 @@ class ProposalController extends Controller
                 $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('approved_at'));
                 $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
 
+                // Call api insert proposal.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $this->vApiConnect->accessToken, $dataProposal);
-                $response = json_decode($response);
                 
-                // if insert sf false and status code 401, call again insert.
+                // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
+                    // if status code 401, call again insert
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $access_token, $dataProposal);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
-                                // get sf id
+                                // set sf id
                                 $sfid = $response1->id;
                             }
                         }    
                     }
+                // if insert sf true.
                 } else if (isset($response->success) && $response->success == true) {
-                    // get sf id
+                    // set sf id
                     $sfid = $response->id;
                 }
             }
@@ -149,15 +152,7 @@ class ProposalController extends Controller
         try {
 
             $proposal = $this->mProposal::findOrFail($id);
-
-            if($proposal->sfid == null) {
-                $listBudget = [];
-            }
-            else {
-                $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)
-                    ->with('budget')
-                    ->get();
-            }
+            $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->with('budget')->get();
             
             return view('proposal.show', compact('proposal', 'listBudget'));
 
@@ -219,18 +214,20 @@ class ProposalController extends Controller
                 $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('approved_at'));
                 $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
 
+                // Call api update proposal.
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken, $dataProposal);
-                $response = json_decode($response);
 
+                // if update sf false.
                 if(isset($response->success) && $response->success == false) {
+                    // if status code 401, call again insert
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
 
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
 
                             $response1 = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token, $dataProposal);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagUpdate = true;
                             }
@@ -284,16 +281,16 @@ class ProposalController extends Controller
             if($this->vApiConnect && $this->vApiConnect->expired == false) {
 
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $this->vApiConnect->accessToken);
-                $response = json_decode($response);
                 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
     
-                        if(json_decode($resFreshToken)->success == true){
-                            $access_token = json_decode($resFreshToken)->access_token;
+                        if($resFreshToken->success == true){
+                            $access_token = $resFreshToken->access_token;
+
                             $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, $access_token);
-                            $response1 = json_decode($response1); 
+
                             if(isset($response1->success) && $response1->success == true) {
                                 $flagDelete = true;
                             }
