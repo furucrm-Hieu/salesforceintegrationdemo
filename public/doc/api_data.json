@@ -2,7 +2,7 @@
   {
     "type": "post",
     "url": "https://login.salesforce.com/services/oauth2/token",
-    "title": "Get token Salesforce",
+    "title": "Salesforceトークン取得",
     "name": "GetToken",
     "group": "1.OAuth2",
     "version": "0.0.1",
@@ -132,7 +132,7 @@
   {
     "type": "get",
     "url": "https://login.salesforce.com/services/oauth2/authorize",
-    "title": "User Authenticates and Authorizes Access",
+    "title": "ユーザによるアクセスの認証および承認",
     "name": "OauthSalesforce",
     "group": "1.OAuth2",
     "version": "0.0.1",
@@ -215,7 +215,7 @@
   {
     "type": "post",
     "url": "https://login.salesforce.com/services/oauth2/token",
-    "title": "Refresh Token Salesforce",
+    "title": "Salesforceトークン更新",
     "name": "RefreshToken",
     "group": "1.OAuth2",
     "version": "0.0.1",
@@ -338,9 +338,9 @@
   {
     "type": "delete",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c/{sfid}",
-    "title": "Delete Budget",
+    "title": "予算削除",
     "name": "DeleteBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -368,14 +368,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "delete",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c/{sfid}",
-    "title": "Delete Proposal",
+    "title": "企画書削除",
     "name": "DeleteProposal",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -403,14 +403,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "delete",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c/{sfid}",
-    "title": "Delete Proposal Budget",
+    "title": "企画書と予算の削除",
     "name": "DeleteProposalBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -438,14 +438,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "post",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c",
-    "title": "Insert Budget",
+    "title": "予算投入",
     "name": "InsertBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -537,14 +537,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "post",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c",
-    "title": "Insert Proposal",
+    "title": "企画書投入",
     "name": "InsertProposal",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -658,14 +658,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "post",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c",
-    "title": "Insert Proposal Budget",
+    "title": "企画書と予算の投入",
     "name": "InsertProposalBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -770,14 +770,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "patch",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Budget__c/{sfid}",
-    "title": "Update Budget",
+    "title": "予算更新",
     "name": "UpdateBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -844,14 +844,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "patch",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal__c/{sfid}",
-    "title": "Update Proposal",
+    "title": "企画書更新",
     "name": "UpdateProposal",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -940,14 +940,14 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
   },
   {
     "type": "patch",
     "url": "https://instance.salesforce.com/services/data/v48.0/sobjects/Proposal_Budget__c/{sfid}",
-    "title": "Update Proposal Budget",
+    "title": "企画書と予算の更新",
     "name": "UpdateProposalBudget",
-    "group": "2.Api_Call",
+    "group": "2.API呼び出し",
     "version": "0.0.1",
     "header": {
       "fields": {
@@ -1027,6 +1027,62 @@
       ]
     },
     "filename": "./ApiController.php",
-    "groupTitle": "2.Api_Call"
+    "groupTitle": "2.API呼び出し"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./docAPi/main.js",
+    "group": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\docAPi\\main.js",
+    "groupTitle": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\docAPi\\main.js",
+    "name": ""
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./doc/main.js",
+    "group": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
+    "groupTitle": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
+    "name": ""
   }
 ]
