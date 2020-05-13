@@ -1,5 +1,61 @@
 define({ "api": [
   {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./doc/main.js",
+    "group": "/media/demonblack/01D580DB9AF46A00/Programing/docAPI/salesforceintegrationdemo/app/Http/Controllers/doc/main.js",
+    "groupTitle": "/media/demonblack/01D580DB9AF46A00/Programing/docAPI/salesforceintegrationdemo/app/Http/Controllers/doc/main.js",
+    "name": ""
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./docAPi/main.js",
+    "group": "/media/demonblack/01D580DB9AF46A00/Programing/docAPI/salesforceintegrationdemo/app/Http/Controllers/docAPi/main.js",
+    "groupTitle": "/media/demonblack/01D580DB9AF46A00/Programing/docAPI/salesforceintegrationdemo/app/Http/Controllers/docAPi/main.js",
+    "name": ""
+  },
+  {
     "type": "post",
     "url": "https://login.salesforce.com/services/oauth2/token",
     "title": "Salesforceトークン取得",
@@ -120,7 +176,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 200 Success\n{\n    \"access_token\": \"00D2w000003yx07!ARAAQPA1GOAK6HbT9tvanJTNB1T7ntobhp_bb.PWHnjFtuPy4v7MF5aRbUoZQACrpawr0J615u2ft_85x.CsMkn69VP3qkiI\"\n    \"refresh_token\": \"5Aep861ZBQbtA4s3JUvLPxi.ria2BFrEU4KlP3aY43kyhG47DsmCItTGeaberMQh3Z14LXWl5mIvz0NImlEAb_Q\"\n    \"signature\": \"S49Ohp3XaxR352arJJr/4jmpc+PYefhCAlIAmbFUdh0=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588840929064\"\n}",
           "type": "json"
         }
@@ -203,7 +259,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 200 Success\n{\n    \"code\": \"aPrx4sgoM2Nd1zWeFVlOWveD0HhYmiDiLmlLnXEBgX01tpVOQMWVSUuafFPHu3kCSjzk4CUTZg==\"\n}",
           "type": "json"
         }
@@ -326,7 +382,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 200 Success\n{\n    \"access_token\": \"00D2w000003yx07!ARAAQJxRl8X0NEwRz3.loGLP_iHVd_SBtYlHw__r3KAOsBRIw3havvuUUWu2ieVj0YTP8h5c13TFF5Da.YqDLLslM4RmRXUD\"\n    \"signature\": \"oUb5WGnLtbeGgVHJA0/RKJNbKiBRCZe6fIdy0NqOKyQ=\"\n    \"scope\": \"refresh_token api\"\n    \"instance_url\": \"https://eap-prototype-dev-ed.my.salesforce.com\"\n    \"id\": \"https://login.salesforce.com/id/00D2w000003yx07EAA/0052w000002J9asAAC\"\n    \"token_type\": \"Bearer\"\n    \"issued_at\": \"1588841618262\"\n}",
           "type": "json"
         }
@@ -361,7 +417,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -396,7 +452,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -431,7 +487,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -530,7 +586,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a092w000002BUitAAG\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
@@ -651,7 +707,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
@@ -763,7 +819,7 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 201 Success\n{\n    \"id\": \"a082w000000ZiI6AAK\",\n    \"success\": true,\n    \"errors\": []\n}",
           "type": "json"
         }
@@ -837,7 +893,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -933,7 +989,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -1020,7 +1076,7 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "成功の応答",
+          "title": "成功時のレスポンス",
           "content": "HTTP/1.1 204 Success\n{}",
           "type": "json"
         }
@@ -1028,61 +1084,5 @@ define({ "api": [
     },
     "filename": "./ApiController.php",
     "groupTitle": "2.API呼び出し"
-  },
-  {
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "optional": false,
-            "field": "varname1",
-            "description": "<p>No type.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "varname2",
-            "description": "<p>With type.</p>"
-          }
-        ]
-      }
-    },
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./docAPi/main.js",
-    "group": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\docAPi\\main.js",
-    "groupTitle": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\docAPi\\main.js",
-    "name": ""
-  },
-  {
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "optional": false,
-            "field": "varname1",
-            "description": "<p>No type.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "varname2",
-            "description": "<p>With type.</p>"
-          }
-        ]
-      }
-    },
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./doc/main.js",
-    "group": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
-    "groupTitle": "E:\\Programing\\docAPI\\salesforceintegrationdemo\\app\\http\\controllers\\doc\\main.js",
-    "name": ""
   }
 ] });

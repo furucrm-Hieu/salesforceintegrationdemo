@@ -5,7 +5,7 @@ define({
         'compare changes to:'         : 'compare changes to:',
         'compared to'                 : 'compared to',
         'Default value:'              : 'デフォルト値:',
-        'Description'                 : '記載',
+        'Description'                 : '説明',
         'Field'                       : '項目',
         'General'                     : 'General',
         'Generated with'              : 'Generated with',
