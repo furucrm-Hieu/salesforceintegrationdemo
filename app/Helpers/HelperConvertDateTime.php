@@ -22,6 +22,7 @@ class HelperConvertDateTime
   public static function convertDateTimeCallApi(string $string)
   {
     $dateTimeCallApi = Carbon::createFromFormat('Y-m-d H:i:s', $string);
+    $dateTimeCallApi = $dateTimeCallApi->subHours(9);
     $dateTimeCallApi = $dateTimeCallApi->format('Y-m-d\TH:i:s');
     return $dateTimeCallApi;
   }
