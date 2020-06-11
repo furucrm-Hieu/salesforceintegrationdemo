@@ -141,8 +141,9 @@ class BudgetController extends Controller
 
             $budget = $this->mBudget->findOrFail($id);
             $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
+            $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $budget->sfid);
 
-            return view('budget.detail', ['budget' => $budget, 'proposal' => $proposal_budget]);
+            return view('budget.detail', ['budget' => $budget, 'proposal' => $proposal_budget, 'listApprovalProcesses' => $listApprovalProcesses]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - BudgetController');
             abort(404);
