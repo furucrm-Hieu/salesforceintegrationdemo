@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
 {
-    protected $mBudget; 
+    protected $mBudget;
     protected $mProposalBudget;
     protected $hHelperHandleTotalAmount;
     protected $hHelperGuzzleService;
@@ -46,7 +46,7 @@ class BudgetController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {   
+    {
         $apiConnect = $this->vApiConnect;
         return view('budget.create', compact('apiConnect'));
     }
@@ -59,7 +59,7 @@ class BudgetController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         try {
 
             // Check validator
@@ -77,10 +77,11 @@ class BudgetController extends Controller
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
+                $dataBudget['Approval_Status__c'] = 'Pending';
 
                 // Call api insert budget.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', $this->vApiConnect->accessToken, $dataBudget);
-                
+
                 // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
                     // if status code 401, call again insert
@@ -96,7 +97,7 @@ class BudgetController extends Controller
                                 // set sf id
                                 $sfid = $response1->id;
                             }
-                        }    
+                        }
                     }
                 } else if (isset($response->success) && $response->success == true) {
                     // set sf id
@@ -140,7 +141,7 @@ class BudgetController extends Controller
 
             $budget = $this->mBudget->findOrFail($id);
             $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
-            
+
             return view('budget.detail', ['budget' => $budget, 'proposal' => $proposal_budget]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - BudgetController');
@@ -157,11 +158,12 @@ class BudgetController extends Controller
     public function edit($id)
     {
         try {
-            
+
             $apiConnect = $this->vApiConnect;
             $budget = $this->mBudget->findOrFail($id);
-
-            return view('budget.create', ['budget' => $budget, 'apiConnect' => $apiConnect]);
+            
+            if($budget->status_approve) return redirect('/budget');
+            return view('budget.edit', ['budget' => $budget, 'apiConnect' => $apiConnect]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Edit - BudgetController');
             abort(404);
@@ -186,7 +188,7 @@ class BudgetController extends Controller
             }
 
             $budget = $this->mBudget::findOrFail($id);
-
+            
             // Flag flagUpdate check update salesforce true or false.
             $flagUpdate = false;
 
@@ -197,8 +199,8 @@ class BudgetController extends Controller
                 $dataBudget['Year__c'] = $request->input('year__c');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken, $dataBudget);
-
                 if(isset($response->success) && $response->success == false) {
+
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
 
@@ -259,10 +261,10 @@ class BudgetController extends Controller
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
-    
+
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
-                            
+
                             $response1 = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $access_token);
 
                             if(isset($response1->success) && $response1->success == true) {
@@ -273,7 +275,7 @@ class BudgetController extends Controller
                 } else if (isset($response->success) && $response->success == true) {
                     $flagDelete = true;
                 }
-                
+
             }
 
             if(!$flagDelete) {
@@ -306,6 +308,27 @@ class BudgetController extends Controller
             }
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
+    }
+
+    public function submitApproval(Request $request) {
+        try {
+            $id = $request->input('id');
+            $budget = $this->mBudget::findOrFail($id);
+            $response = $this->hHelperGuzzleService->submitApproval($this->vApiConnect->accessToken, $budget->sfid);
+
+            if($response->success == true) {
+                $budget->status_approve = true;
+                $budget->save();
+                return redirect('budget/'. $id);
+            }
+
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
+
+        } catch (\Exception $ex) {
+            Log::info($ex->getMessage().'- submitApproval - BudgetController');
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
+        }
+
     }
 
     private function validation() {

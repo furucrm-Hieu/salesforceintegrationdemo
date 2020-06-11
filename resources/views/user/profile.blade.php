@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-xs-6 col-xs-offset-3">
                             <a id="buttonState" href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) ? $api->expired ? 'btn-success' : 'btn-danger' : 'btn-success' }}">
-                                {{ !isset($api) ? __('messages.Connect')  : $api->expired ? __('messages.Connect') : __('messages.Disconnect')  }}
+                                {{ isset($api) ? $api->expired ? __('messages.Connect') :  __('messages.Disconnect') : __('messages.Connect') }}
                             </a>
                         </div>
                     </div>

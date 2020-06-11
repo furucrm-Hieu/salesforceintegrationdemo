@@ -13,7 +13,7 @@
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
         <!-- /.box-header -->
         <div class="box-body">
@@ -36,8 +36,10 @@
                 <td>{{ $budget->year__c }}</td>
                 <td>{{ number_format($budget->total_amount__c, 2)}}</td>
                 <td>
-                  <a href="{{ url('/budget/' . $budget->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                  <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'budget', {{$budget->id}}) " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                  @if (!$budget->status_approve)
+                        <a href="{{ url('/budget/' . $budget->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                        <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'budget', {{$budget->id}}) " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                  @endif
                   </a>
                 </td>
               </tr>
