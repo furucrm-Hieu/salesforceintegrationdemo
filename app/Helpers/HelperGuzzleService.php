@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Log;
 use GuzzleHttp\{Client, RequestOptions};
 use Illuminate\Support\Facades\Http;
 
-class HelperGuzzleService 
+class HelperGuzzleService
 {
+
+  const LINK_SF = "https://eap-prototype-dev-ed.my.salesforce.com/services/data/";
 
   public static function guzzlePost($url, $token, $param_data) {
     try {
@@ -108,6 +110,89 @@ class HelperGuzzleService
       DB::rollback();
       return json_decode('{"success" : false}');
     }
+  }
+
+  public function guzzleGetApproval($token, $code) {
+
+    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Id,(SELECT+Id,OriginalActor.Name,ProcessNode.Name,SystemModstamp,Comments,StepStatus+FROM+StepsAndWorkitems+ORDER+BY+CreatedDate+DESC,+Id+DESC)+FROM+ProcessInstance+WHERE+TargetObjectId+=+'".$code."'+ORDER+BY+CreatedDate+DESC";
+
+    $response = Http::withHeaders([
+      'Authorization' => 'Bearer '.$token,
+      'Content-Type' => 'application/json',
+    ])->get($url);
+
+    if($response->status() == 200) {
+      $data = json_decode($response->body());
+      return $this->convertDataApprovalProcess($data);
+    }
+
+    return [];
+  }
+
+  public function submitApproval($token, $param_data) {
+    try {
+
+      $link = "https://eap-prototype-dev-ed.my.salesforce.com/services/data/";
+
+      $url = $this::LINK_SF."v30.0/process/approvals";
+
+      $dataSubmit = (Object) [
+        "actionType" => "Submit",
+        "contextId" => $param_data,
+        "comments" => "Submit request",
+      ];
+
+      $response = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'Authorization' => 'Bearer '.$token
+      ])->post($url, [
+        "requests" => [$dataSubmit]
+      ]);
+      
+      if($response->status() == 200) {
+        return json_decode('{"success" : true}');
+      }
+      return json_decode('{"success" : false}');
+
+    } catch (\Exception $ex) {
+      return json_decode('{"success" : false}');
+      Log::info($ex->getMessage().'- guzzlePost - HelperGuzzleService');
+    }
+  }
+
+  public function convertDataApprovalProcess($data) {
+    $arrValue = [];
+
+    if(count($data->records) > 0)
+    {
+      foreach ($data->records as $value) {
+      
+        $temp1 = $value->StepsAndWorkitems->records;
+
+        foreach ($temp1 as $key => $value1) {
+
+          $arrData = [
+          "StepName" => empty($value1->ProcessNode->Name) ? 'Request Submitted' : $value1->ProcessNode->Name,
+          "Date" => $this->convertDateTimeApproval($value1->SystemModstamp),
+          "Status" => ($value1->StepStatus == 'Started') ? 'Submitted' : $value1->StepStatus,
+          "AssignedTo" => $value1->OriginalActor->Name,
+          ];
+
+          array_push($arrValue, $arrData);
+          
+        }
+      }
+    }
+
+    return $arrValue;
+  }
+
+  public function convertDateTimeApproval($datetime) {
+    $datetime = str_replace("T"," ", $datetime);
+    $datetime = str_replace(".000+0000","", $datetime);
+    $dateTimeJP = Carbon::createFromFormat('Y-m-d H:i:s', $datetime);
+    $dateTimeUTC = $dateTimeJP->addHours(9);
+    return $dateTimeUTC->toDateTimeString();
   }
   
 }

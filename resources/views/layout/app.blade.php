@@ -119,8 +119,8 @@
       }
   });
 
-  var base_url = {!! json_encode(url('/')) !!};
-  var curLocale = '{!! $locale !!}';
+  var base_url = "{!! url('/') !!}";
+  var curLocale = "{!! $locale !!}";
   var tranlateConfirm = "{{ __('messages.Confirm_delete') }}";
   var dataLanguage = (curLocale == 'en') ? en_datatable : jp_datatable;
   var systemError = "{{ __('messages.System_Error') }}";

@@ -85,6 +85,7 @@ class ProposalController extends Controller
                 $dataProposal['Details__c'] = $request->input('detail');
                 $dataProposal['Approved_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('approved_at'));
                 $dataProposal['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
+                $dataProposal['Approval_Status__c'] = 'Pending';
 
                 // Call api insert proposal.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal__c/', $this->vApiConnect->accessToken, $dataProposal);
@@ -153,8 +154,9 @@ class ProposalController extends Controller
 
             $proposal = $this->mProposal::findOrFail($id);
             $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->with('budget')->get();
-            
-            return view('proposal.show', compact('proposal', 'listBudget'));
+            $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $proposal->sfid);
+
+            return view('proposal.show', compact('proposal', 'listBudget', 'listApprovalProcesses'));
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - ProposalController');
@@ -332,6 +334,28 @@ class ProposalController extends Controller
             }
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
+    }
+
+    public function submitApproval(Request $request) {
+        try {
+            $id = $request->input('id');
+            $proposal = $this->mProposal::findOrFail($id);
+
+            $response = $this->hHelperGuzzleService->submitApproval($this->vApiConnect->accessToken, $proposal->sfid);
+
+            if($response->success == true) {
+                $proposal->status_approve = true;
+                $proposal->save();
+                return redirect('proposal/'. $id);
+            }
+
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
+
+        } catch (\Exception $ex) {
+            Log::info($ex->getMessage().'- submitApproval - ProposalController');
+            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
+        }
+
     }
 
     private function validation() {

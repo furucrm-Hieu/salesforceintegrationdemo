@@ -34,12 +34,14 @@
                 <td><a href="{{ url('/proposal/' . $value->id ) }}">{{$value->name}}</a></td>
                 <td>{{ HelperDateTime::convertDateTimeUtcToJp($value->proposed_at__c) }}</td>
                 <td>{{ HelperDateTime::convertDateTimeUtcToJp($value->approved_at__c) }}</td>
-                <td>{{$value->year__c}}</td>
+                <td>{{ $value->year__c }}</td>
                 <td>{{ number_format($value->total_amount__c, 2)}}</td>
                 <td>
+                  @if($value->status_approve == false)
                   <a href="{{ url('/proposal/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                  <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal', {{$value->id}}) " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                  <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal', '{{$value->id}}') " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                   </a>
+                  @endif
                 </td>
               </tr>
             @endforeach

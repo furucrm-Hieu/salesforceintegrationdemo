@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['checkAuth']], function() {
     Route::resource('/proposal', 'ProposalController');
+    Route::post('/proposal-submit-approval', 'ProposalController@submitApproval');
     Route::resource('/budget', 'BudgetController');
     Route::resource('/proposalbudget', 'ProposalBudgetController');
     Route::get('lang/{locale}', 'AuthController@changeLocalization');

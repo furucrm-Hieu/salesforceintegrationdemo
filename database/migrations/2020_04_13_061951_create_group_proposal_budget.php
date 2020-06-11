@@ -30,6 +30,7 @@ class CreateGroupProposalBudget extends Migration
             $table->longText('details__c')->nullable();
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
+            $table->boolean('status_approve')->default(false);
             $table->timestamps();
         });
 
@@ -39,6 +40,7 @@ class CreateGroupProposalBudget extends Migration
             $table->string('year__c', 4);
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
+            $table->boolean('status_approve')->default(false);
             $table->timestamps();
         });
 
@@ -48,6 +50,30 @@ class CreateGroupProposalBudget extends Migration
             $table->string('budget__c', 50);
             $table->double('amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
+            $table->boolean('status_approve')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('expense__c', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 80);
+            $table->string('year__c', 4);
+            $table->dateTime('proposed_at__c');
+            $table->dateTime('approved_at__c');
+            $table->longText('details__c')->nullable();
+            $table->double('total_amount__c', 16, 2);
+            $table->string('sfid', 50)->nullable();
+            $table->boolean('status_approve')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('expense_budget__c', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('expense__c', 50);
+            $table->string('budget__c', 50);
+            $table->double('amount__c', 16, 2);
+            $table->string('sfid', 50)->nullable();
+            $table->boolean('status_approve')->default(false);
             $table->timestamps();
         });
 
@@ -64,5 +90,7 @@ class CreateGroupProposalBudget extends Migration
         Schema::dropIfExists('proposal__c');
         Schema::dropIfExists('budget__c');
         Schema::dropIfExists('proposal_budget__c');
+        Schema::dropIfExists('expense__c');
+        Schema::dropIfExists('expense_budget__c');
     }
 }

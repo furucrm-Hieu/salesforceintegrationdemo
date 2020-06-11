@@ -19,12 +19,13 @@
           <div class="box-body">
 
             <div class="form-group">
-              <div class="col-sm-5" ></div>
-              <div class="col-sm-1" >
-                <a class="btn btn-block btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
-              </div>
-              <div class="col-sm-1" >
-                <button type="button" class="btn btn-block btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
+              <div class="col-sm-4" ></div>
+              <div class="col-sm-3" >
+                @if($proposal->status_approve == false)
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                <a class="btn btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
+                <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
+                @endif
               </div>
               <div class="col-sm-5" ></div>
             </div>
@@ -90,15 +91,18 @@
           <input name="_method" type="hidden" value="DELETE">
         </form>
 
+        <form id="submitApproval-form" action="{{url('proposal-submit-approval')}}" method="POST" style="display: none;">
+          {{ csrf_field() }}
+          <input type="hidden" name="id" value="{{$proposal->id}}" />
+        </form>
       </div>
 
-      <!--  -->
+      <!-- start box junction -->
       <div class="box">
         <div class="box-header">
           <h3 class="box-title"><b>@lang("messages.Proposal_Budget")</b></h3>
 
         </div>
-        <!-- /.box-header -->
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
             <a class="btn btn-primary bt-center-dt" href="{{url('/proposalbudget/proposal-'.$proposal->id)}}">@lang("messages.Create_Proposal_Budget")</a>
@@ -126,9 +130,40 @@
             </tbody>           
           </table>
         </div>
-        <!-- /.box-body -->
       </div>
-      <!--  -->
+      <!-- end box junction -->
+
+      <!-- start box approval processes -->
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title"><b>Approval Process Flow</b></h3>
+        </div>
+        <div class="box-body">
+          <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Step Name</th>
+              <th style="width: 300px">Date</th>
+              <th style="width: 300px">Status</th>
+              <th>Assigned To</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($listApprovalProcesses as $approval)
+              <tr>
+                <td>{{$approval['StepName']}}</td>
+                <td>{{$approval['Date']}}</td>
+                <td>{{$approval['Status']}}</td>
+                <td>{{$approval['AssignedTo']}}</td>
+              </tr>
+            @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- end box approval processes -->
+
+
     </div>
 
   </div>
@@ -154,6 +189,14 @@
         $('#overlay').fadeIn();
         $('#delete-form').submit();
       }
+    }
+
+    function postSubmitApproval(event) {
+      event.preventDefault();
+
+      $('#overlay').fadeIn();
+      $('#submitApproval-form').submit();
+
     }
 
   </script>
