@@ -14,12 +14,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => ['checkAuth']], function() {
+
     Route::resource('/proposal', 'ProposalController');
     Route::post('/proposal-submit-approval', 'ProposalController@submitApproval');
+
     Route::resource('/budget', 'BudgetController');
     Route::post('/budget-submit-approval', 'BudgetController@submitApproval');
+
     Route::resource('/proposalbudget', 'ProposalBudgetController');
+
     Route::resource('/expense', 'ExpenseController');
+    Route::post('/expense-submit-approval', 'ExpenseController@submitApproval');
+
     Route::get('lang/{locale}', 'AuthController@changeLocalization');
     Route::get('/profile', 'AuthController@userProfile')->name('profile');
     Route::prefix('oauth2') ->group(function() {

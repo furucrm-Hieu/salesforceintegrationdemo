@@ -90,6 +90,7 @@
     <section class="content-header" style="padding-bottom: 20px;">
       <a href="{{ route('proposal.index') }}" class="{{ Request::is('proposal') || Request::is('proposal/*') ? 'is-active': '' }}" style="margin-right: 10px; color:#fff;">@lang("messages.Proposal")</a>
       <a href="{{ route('budget.index') }}" class="{{ Request::is('budget') || Request::is('budget/*') ? 'is-active': '' }}" style="margin-right: 10px; color:#fff;">@lang("messages.Budget")</a>
+      <a href="{{ route('expense.index') }}" class="{{ Request::is('expense') || Request::is('expense/*') ? 'is-active': '' }}" style="margin-right: 10px; color:#fff;">Expense</a>
     </section>
   </header>
 
