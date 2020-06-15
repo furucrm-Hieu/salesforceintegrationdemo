@@ -154,7 +154,10 @@ class ProposalController extends Controller
 
             $proposal = $this->mProposal::findOrFail($id);
             $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->with('budget')->get();
-            $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $proposal->sfid);
+            $listApprovalProcesses = [];
+            if($proposal->status_approve == true) {
+                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $proposal->sfid);
+            }
 
             return view('proposal.show', compact('proposal', 'listBudget', 'listApprovalProcesses'));
 

@@ -1,28 +1,28 @@
 <div class="box-body">
   
   <div class="form-group">
-    <label class="col-sm-2 control-label">@lang("messages.Proposal")<span class="red"> *</span> </label>
-    <select class="form-control custom-select" name="proposal__c" required {{($type=='edit') ? 'disabled' : 'required'}}>
+    <label class="col-sm-2 control-label">Expense<span class="red"> *</span> </label>
+    <select class="form-control custom-select" name="expense__c" {{($type=='edit') ? 'disabled' : 'required'}}>
       <option value=""> -- @lang("messages.None") --</option>
-      @foreach($proposals as $key => $value)
-        <option value="{{$key}}" {{ ($key == $proposalBudget->proposal__c) ? 'selected' : '' }}>{{$value}}</option>
+      @foreach($expenses as $key => $value)
+        <option value="{{$key}}" {{ ($key == $expenseBudget->expense__c) ? 'selected' : '' }}>{{$value}}</option>
       @endforeach
     </select>
   </div>
 
   <div class="form-group">
     <label class="col-sm-2 control-label">@lang("messages.Budget")<span class="red"> *</span></label>
-    <select class="form-control custom-select" name="budget__c" required {{($type=='edit') ? 'disabled' : 'required'}}>
+    <select class="form-control custom-select" name="budget__c"  {{($type=='edit') ? 'disabled' : 'required'}}>
       <option value=""> -- @lang("messages.None") --</option>
       @foreach($budgets as $key => $value)
-        <option value="{{$key}}" {{ ($key == $proposalBudget->budget__c) ? 'selected' : '' }}>{{$value}}</option>
+        <option value="{{$key}}" {{ ($key == $expenseBudget->budget__c) ? 'selected' : '' }}>{{$value}}</option>
       @endforeach
     </select>
   </div>
 
   <div class="form-group">
     <label class="col-sm-2 control-label">@lang("messages.Amount")<span class="red"> *</span></label>
-    <input type="number" min="0.00" step="0.01" class="form-control custom-select" required value="{{ old('amount', $proposalBudget->amount__c )}}" name="amount">
+    <input type="number" min="0.00" step="0.01" class="form-control custom-select" required value="{{ old('amount', $expenseBudget->amount__c )}}" name="amount">
     @if ($errors->has('amount'))
       <br/>
       <label class="col-sm-2 control-label"></label>
@@ -41,6 +41,10 @@
 
 </div>
 <div class="box-footer button-footer">
-  <button type="submit" id="submit" class="btn btn-info">@lang("messages.Submit")</button>
+  @if($apiConnect)
+    <button type="submit" id="submit" class="btn btn-info">@lang("messages.Submit")</button>
+  @else
+    <button type="button" onclick="checkConnectSf()" class="btn btn-info">@lang("messages.Submit")</button>
+  @endif
   <a href="{{ isset($linkRedirect) ? $linkRedirect : 'javascript:history.back()'}}" class="btn btn-default">@lang("messages.Cancel")</a>
 </div>

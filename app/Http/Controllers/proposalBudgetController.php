@@ -39,7 +39,8 @@ class ProposalBudgetController extends Controller
      */
     public function index()
     {
-        //return view('proposal.list');
+        $list_proposal_budget = $this->mProposalBudget->with(['budget', 'proposal'])->get();
+        return view('proposal_budget.list', compact('list_proposal_budget'));
     }
 
     /**
@@ -49,7 +50,52 @@ class ProposalBudgetController extends Controller
      */
     public function create(Request $request)
     {   
-        return view('proposal_budget/create');
+        $proposalBudget = new $this->mProposalBudget([
+            'proposal__c' => '',
+            'budget__c' => '',
+            'amount__c' => ''
+        ]);
+
+        $apiConnect = $this->vApiConnect;
+        $proposals = $this->mProposal->orderBy('name')->get()->pluck('name','sfid');
+        $budgets = $this->mBudget->orderBy('name')->get()->pluck('name','sfid');
+        $linkRedirect = url('proposal-budget');
+        $type = 'create';
+        
+        return view('proposal_budget.create', compact('proposalBudget', 'proposals', 'budgets', 'linkRedirect', 'apiConnect', 'type'));
+    }
+
+    public function createJunction($id) {
+
+        try {
+            $proposalBudget = new $this->mProposalBudget([
+                'proposal__c' => '',
+                'budget__c' => '',
+                'amount__c' => ''
+            ]);
+
+            $dataCheckType = explode("-", $id);
+
+            if($dataCheckType[0] == 'proposal') {
+                $proposalBudget->proposal__c = $this->mProposal::findOrFail($dataCheckType[1])->sfid;
+            }elseif ($dataCheckType[0]  == 'budget') {
+                $proposalBudget->budget__c = $this->mBudget->findOrFail($dataCheckType[1])->sfid;
+            }
+            else {
+                abort(404);
+            }
+
+            $apiConnect = $this->vApiConnect;
+            $proposals = $this->mProposal->orderBy('name')->get()->pluck('name','sfid');
+            $budgets = $this->mBudget->orderBy('name')->get()->pluck('name','sfid');
+            $linkRedirect = url($dataCheckType[0].'/'.$dataCheckType[1]);
+            $type = 'create';
+
+            return view('proposal_budget.create', compact('proposalBudget', 'proposals', 'budgets', 'linkRedirect', 'apiConnect', 'type'));
+        } catch (\Exception $ex) {
+            Log::info($ex->getMessage().'- createJunction - ProposalBudgetController');
+            abort(404);
+        }
     }
 
     /**
@@ -118,16 +164,9 @@ class ProposalBudgetController extends Controller
 
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);
+            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '' , $proposalBudget->budget__c);
 
-            if($request->input('typeRedirect') == 'budget') {
-                $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
-                return redirect('budget/'.$budgetRedirect->id);
-            }
-            else {
-                $proposalRedirect = $this->mProposal::where('sfid', $request->input('proposal__c'))->firstOrFail();
-                return redirect('proposal/'.$proposalRedirect->id);
-            }
+            return redirect('proposal-budget/'.$proposalBudget->id);
                         
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ProposalBudgetController');
@@ -145,29 +184,15 @@ class ProposalBudgetController extends Controller
     public function show($id)
     {
         try {
-            $proposalBudget = new $this->mProposalBudget([
-                'proposal__c' => '',
-                'budget__c' => '',
-                'amount__c' => ''
-            ]);
 
-            $dataCheckType = explode("-", $id);
-            if($dataCheckType[0] == 'proposal') {
-                $proposalBudget->proposal__c = $this->mProposal::findOrFail($dataCheckType[1])->sfid;
-            }elseif ($dataCheckType[0]  == 'budget') {
-                $proposalBudget->budget__c = $this->mBudget->findOrFail($dataCheckType[1])->sfid;
-            }
-            else {
-                abort(404);
+            $proposalBudget = $this->mProposalBudget::with(['budget', 'proposal'])->find($id);
+            $listApprovalProcesses = [];
+            if($proposalBudget->status_approve == true) {
+                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $proposalBudget->sfid);
             }
 
-            $typeRedirect = $dataCheckType[0];
-            $linkRedirect = url($typeRedirect.'/'.$dataCheckType[1]);
+            return view('proposal_budget.show', compact('proposalBudget', 'listApprovalProcesses'));
 
-            $proposals = $this->mProposal::whereNotNull('sfid')->orderBy('name')->get()->pluck('name','sfid');
-            $budgets = $this->mBudget::whereNotNull('sfid')->orderBy('name')->get()->pluck('name','sfid');
-
-            return view('proposal_budget.create', compact('proposalBudget', 'proposals', 'budgets', 'typeRedirect', 'linkRedirect'));
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - ProposalBudgetController');
             abort(404);
@@ -184,21 +209,17 @@ class ProposalBudgetController extends Controller
     {
         try {
 
-            $dataCheckType = explode("-", $id);
-            if($dataCheckType[0] == 'proposal' || $dataCheckType[0] == 'budget') {
-                $typeRedirect = $dataCheckType[0];
-            }
-            else {
-                abort(404);
-            }
+            $proposalBudget = $this->mProposalBudget::findOrFail($id);
+            $proposals = $this->mProposal::orderBy('name')->get()->pluck('name', 'sfid');
+            $budgets = $this->mBudget::orderBy('name')->get()->pluck('name', 'sfid');
+            $apiConnect = $this->vApiConnect;
+            $linkRedirect = url('proposal-budget/'.$proposalBudget->id);
+            $type = 'edit';
+            
+            return view('proposal_budget.edit', compact('proposalBudget', 'proposals', 'budgets', 'apiConnect', 'linkRedirect', 'type'));
 
-            $proposalBudget = $this->mProposalBudget::findOrFail($dataCheckType[1]);
-            $proposals = $this->mProposal::whereNotNull('sfid')->orderBy('name')->get()->pluck('name', 'sfid');
-            $budgets = $this->mBudget::whereNotNull('sfid')->orderBy('name')->get()->pluck('name', 'sfid');
-
-            return view('proposal_budget.edit', compact('proposalBudget', 'proposals', 'budgets', 'typeRedirect'));
         } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- Edit - ProposalController');
+            Log::info($ex->getMessage().'- Edit - ProposalBudgetController');
             abort(404);
         }
     }
@@ -214,7 +235,7 @@ class ProposalBudgetController extends Controller
     {
         try {
             // Check validator
-            $validator = Validator::make($request->all(), $this->validation());
+            $validator = Validator::make($request->all(), $this->validation_edit());
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -227,8 +248,8 @@ class ProposalBudgetController extends Controller
             // Check and update to salesforce.
             if($this->vApiConnect && $this->vApiConnect->expired == false) {
                 $dataProBud = [];
-                $dataProBud['Proposal__c'] = $request->input('proposal__c');
-                $dataProBud['Budget__c'] = $request->input('budget__c');
+                // $dataProBud['Proposal__c'] = $request->input('proposal__c');
+                // $dataProBud['Budget__c'] = $request->input('budget__c');
                 $dataProBud['Amount__c'] = $request->input('amount');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, $this->vApiConnect->accessToken, $dataProBud);
@@ -258,31 +279,18 @@ class ProposalBudgetController extends Controller
 
             DB::beginTransaction();
 
-            $oldPB = [
-                'proposal__c' => $proposalBudget->proposal__c,
-                'budget__c' => $proposalBudget->budget__c,
-            ];
-
             $requestData = [];
-            $requestData['proposal__c'] = $request->input('proposal__c');
-            $requestData['budget__c'] = $request->input('budget__c');
+            // $requestData['proposal__c'] = $request->input('proposal__c');
+            // $requestData['budget__c'] = $request->input('budget__c');
             $requestData['amount__c'] = $request->input('amount');
 
             $proposalBudget->update($requestData);
 
             DB::commit();
-
-            $this->hHelperHandleTotalAmount->caseUpdateJunction($oldPB, $proposalBudget->getChanges());
-
-            if($request->input('typeRedirect') == 'budget') {
-                $budgetRedirect = $this->mBudget::where('sfid', $request->input('budget__c'))->firstOrFail();
-                return redirect('budget/'.$budgetRedirect->id);
-            }
-            else {
-                $proposalRedirect = $this->mProposal::where('sfid', $request->input('proposal__c'))->firstOrFail();
-                return redirect('proposal/'.$proposalRedirect->id);
-            }
             
+            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '', $proposalBudget->budget__c);
+
+            return redirect('proposal-budget/'.$proposalBudget->id);
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalBudgetController');
@@ -339,9 +347,12 @@ class ProposalBudgetController extends Controller
             $proposalBudget->delete();
             DB::commit();
             
-            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, $proposalBudget->budget__c);         
+            $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '', $proposalBudget->budget__c);
 
-            return response()->json(['success' => true]);
+            if($request->ajax()){
+                return response()->json(['success' => true]);
+            }
+            return redirect('proposal-budget');
 
         }catch(\Exception $ex) {
             Log::info($ex->getMessage(). ' Destroy - ProposalBudgetController');
@@ -354,6 +365,12 @@ class ProposalBudgetController extends Controller
         return [
             'budget__c' => 'required',
             'proposal__c' => 'required',
+            'amount' => 'max:12',
+        ];
+    }
+
+    private function validation_edit() {
+        return [
             'amount' => 'max:12',
         ];
     }

@@ -3,20 +3,20 @@
 @section('content')
 <section class="content-header">
   <h1>
-    @lang("messages.Create_Proposal_Budget")
+    Edit Expense Budget
   </h1>
 </section>
 
-<!-- Main content -->
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
       
       <div class="box">
 
-        <form action="{{url('proposal-budget')}}" method="POST" id="createform" class="form-horizontal">
+        <form action="{{url('expense-budget/'.$expenseBudget->id)}}" id="editform" method="POST" class="form-horizontal">
           {{ csrf_field() }}
-          @include('proposal_budget.form')
+          @method('PUT')
+          @include('expense_budget.form')
         </form>
 
       </div>
@@ -29,12 +29,21 @@
   <script>
     $(function () {
 
-      $('#createform').submit(function() {
+      $('#editform').submit(function() {
         $('#overlay').fadeIn();
         $('#submit').attr('disabled', true);
       });
 
     })
+
+    function checkConnectSf() {     
+      if(!$('#editform')[0].checkValidity()) {
+        $("#editform")[0].reportValidity();
+      }
+      else {
+        alert(tokenError);
+      }     
+    }
   </script>
   
 @endsection

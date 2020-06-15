@@ -5,30 +5,46 @@ namespace App\Helpers;
 use Carbon\Carbon;
 use App\Models\Proposal;
 use App\Models\Budget;
+use App\Models\Expense;
 use DB, Session;
 use Illuminate\Support\Facades\Log;
 
 class HelperHandleTotalAmount 
 {
-  public static function caseCreateDeleteJunction($proposal__c, $budget__c)
+  public function caseCreateDeleteJunction($proposal__c, $expense__c, $budget__c)
   {
     DB::beginTransaction();
 
     try{
 
-      $proposal = Proposal::where('sfid', $proposal__c)->first();
-      if($proposal) {
-        $totalAmountProposal = $proposal->proposal_budget->sum('amount__c');
-        $proposal->total_amount__c = $totalAmountProposal;
-        $proposal->save();
+      if(!empty($proposal__c)) {
+        $proposal = Proposal::where('sfid', $proposal__c)->first();
+        if($proposal) {
+          $totalAmountProposal = $proposal->proposal_budget->sum('amount__c');
+          $proposal->total_amount__c = $totalAmountProposal;
+          $proposal->save();
+        }
+      }
+
+      if(!empty($expense__c)) {
+        $expense = Expense::where('sfid', $expense__c)->first();
+        if($expense) {
+          $totalAmountExpense = $expense->expense_budget->sum('amount__c');
+          $expense->total_amount__c = $totalAmountExpense;
+          $expense->save();
+        }
       }
       
-      $budget = Budget::where('sfid', $budget__c)->first();
-      if($budget) {
-        $totalAmountBudget = $budget->proposal_budget->sum('amount__c');
-        $budget->total_amount__c = $totalAmountBudget;
-        $budget->save();
+      if(!empty($budget__c)) {
+        $budget = Budget::where('sfid', $budget__c)->first();
+        if($budget) {
+          $totalAmountPB = $budget->proposal_budget->sum('amount__c');
+          $totalAmountEB = $budget->expense_budget->sum('amount__c');
+          $budget->total_amount__c = $totalAmountPB + $totalAmountEB;
+          $budget->save();
+        }
       }
+      
       
       DB::commit();
 
@@ -38,7 +54,7 @@ class HelperHandleTotalAmount
     }   
   }
 
-  public static function caseUpdateJunction($oldPB, $newPB)
+  public function caseUpdateJunction($oldPB, $newPB)
   {
     DB::beginTransaction();
 
@@ -84,18 +100,19 @@ class HelperHandleTotalAmount
     }   
   }
 
-  public static function caseDeleteParent($typeParent, $arrSfId)
+  public function caseDeleteParent($typeParent, $arrSfId, $arrSfId1 = null)
   {
     DB::beginTransaction();
 
     try{
 
-      if($typeParent == 'proposal')
+      if($typeParent == 'proposal' || $typeParent == 'expense')
       {
         $listBudget = Budget::whereIn('sfid', $arrSfId)->get();
         foreach ($listBudget as $budget) {
-          $totalAmountBudget = $budget->proposal_budget->sum('amount__c');
-          $budget->total_amount__c = $totalAmountBudget;
+          $totalAmountPB = $budget->proposal_budget->sum('amount__c');
+          $totalAmountEB = $budget->expense_budget->sum('amount__c');
+          $budget->total_amount__c = $totalAmountPB + $totalAmountEB;
           $budget->save();
         }
       }
@@ -106,6 +123,12 @@ class HelperHandleTotalAmount
           $totalAmountProposal = $proposal->proposal_budget->sum('amount__c');
           $proposal->total_amount__c = $totalAmountProposal;
           $proposal->save();
+        }
+        $listExpense = Expense::whereIn('sfid', $arrSfId1)->get();
+        foreach ($listExpense as $expense) {
+          $totalAmountExpense = $expense->expense_budget->sum('amount__c');
+          $expense->total_amount__c = $totalAmountExpense;
+          $expense->save();
         }
       }
       

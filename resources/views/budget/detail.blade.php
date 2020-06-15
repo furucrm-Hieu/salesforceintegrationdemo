@@ -56,6 +56,7 @@
     <input type="hidden" name="id" value="{{$budget->id}}" />
 </form>
 
+<!-- start box junction -->
 <div class="box">
     <div class="box-header">
         <h3 class="box-title"><b>@lang("messages.Proposal_Budget")</b></h3>
@@ -63,7 +64,7 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="button-footer" style="height: 0px">
-            <a class="btn btn-primary bt-center-dt" href="{{ route('proposalbudget.show', 'budget-'.$budget->id) }}">@lang("messages.Create_Proposal_Budget")</a>
+            <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/budget-'.$budget->id)}}">@lang("messages.Create_Proposal_Budget")</a>
         </div>
         <table class="table table-bordered table-striped" id="proposalBudget">
             <thead>
@@ -79,44 +80,87 @@
                         <td><a href="{{ url('/proposal/' . $single->proposal->id ) }}">{{$single->proposal->name}}</a></td>
                         <td>{{ number_format($single->amount__c, 2)}}</td>
                         <td>
-                            <a href="{{ route('proposalbudget.edit', ['proposalbudget' => 'budget-'.$single->id]) }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                            <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposalbudget', {{$single->id}})" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i></i>
+                            <a href="{{ url('/proposal-budget/' . $single->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
+                            @if($single->status_approve == false)
+                            <a href="{{ url('/proposal-budget/' . $single->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                            <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$single->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                             </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    <!-- /.box-body -->
 </div>
+<!-- end box junction -->
+
+<!-- start box junction -->
+<div class="box">
+    <div class="box-header">
+      <h3 class="box-title"><b>Expense Budget</b></h3>
+
+    </div>
+    <div class="box-body">
+      <div class="button-footer" style="height: 0px">
+        <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/budget-'.$budget->id)}}">Create Expense Budget</a>
+      </div>
+      <table class="table table-bordered table-striped" id="expenseBudget">
+        <thead>
+        <tr>
+          <th>@lang("messages.Budget_Name")</th>
+          <th>@lang("messages.Amount")</th>
+          <th style="width: 120px">@lang("messages.Action")</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach($expense as $value)
+        <tr>
+          <td><a href="{{ url('/expense/' . $value->expense->id ) }}">{{$value->expense->name}}</a></td>
+          <td>{{ number_format($value->amount__c, 2)}}</td>
+          <td>
+            <a href="{{ url('/expense-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
+            @if($value->status_approve == false)
+            <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+            <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+            </a>
+            @endif
+          </td>
+        </tr>
+        @endforeach
+        </tbody>           
+      </table>
+    </div>
+</div>
+<!-- end box junction -->
+
 <!-- start box approval processes -->
 <div class="box">
-<div class="box-header">
-    <h3 class="box-title"><b>Approval Process Flow</b></h3>
-</div>
-<div class="box-body">
-    <table class="table table-bordered table-striped">
-    <thead>
-    <tr>
-        <th>Step Name</th>
-        <th style="width: 300px">Date</th>
-        <th style="width: 300px">Status</th>
-        <th>Assigned To</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($listApprovalProcesses as $approval)
+    <div class="box-header">
+        <h3 class="box-title"><b>Approval Process Flow</b></h3>
+    </div>
+    <div class="box-body">
+        <table class="table table-bordered table-striped">
+        <thead>
         <tr>
-        <td>{{$approval['StepName']}}</td>
-        <td>{{$approval['Date']}}</td>
-        <td>{{$approval['Status']}}</td>
-        <td>{{$approval['AssignedTo']}}</td>
+            <th>Step Name</th>
+            <th style="width: 300px">Date</th>
+            <th style="width: 300px">Status</th>
+            <th>Assigned To</th>
         </tr>
-    @endforeach
-    </tbody>
-    </table>
-</div>
+        </thead>
+        <tbody>
+        @foreach($listApprovalProcesses as $approval)
+            <tr>
+            <td>{{$approval['StepName']}}</td>
+            <td>{{$approval['Date']}}</td>
+            <td>{{$approval['Status']}}</td>
+            <td>{{$approval['AssignedTo']}}</td>
+            </tr>
+        @endforeach
+        </tbody>
+        </table>
+    </div>
 </div>
 <!-- end box approval processes -->
 @stop
@@ -141,6 +185,9 @@
 
         $(function () {
             $('#proposalBudget').dataTable({
+                "language" : dataLanguage,
+            });
+            $('#expenseBudget').dataTable({
                 "language" : dataLanguage,
             });
         })

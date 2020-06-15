@@ -3,7 +3,7 @@
 @section('content')
 <section class="content-header">
   <h1>
-    @lang("messages.Create_Proposal_Budget")
+    Create Expense Budget
   </h1>
 </section>
 
@@ -14,9 +14,9 @@
       
       <div class="box">
 
-        <form action="{{url('proposal-budget')}}" method="POST" id="createform" class="form-horizontal">
+        <form action="{{url('expense-budget')}}" method="POST" id="createform" class="form-horizontal">
           {{ csrf_field() }}
-          @include('proposal_budget.form')
+          @include('expense_budget.form')
         </form>
 
       </div>
@@ -35,6 +35,15 @@
       });
 
     })
+
+    function checkConnectSf() {     
+      if(!$('#createform')[0].checkValidity()) {
+        $("#createform")[0].reportValidity();
+      }
+      else {
+        alert(tokenError);
+      }     
+    }
   </script>
   
 @endsection

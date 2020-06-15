@@ -13,7 +13,7 @@
       
       <div class="box">
 
-        <form action="{{url('proposalbudget/'.$proposalBudget->id)}}" id="editform" method="POST" class="form-horizontal">
+        <form action="{{url('proposal-budget/'.$proposalBudget->id)}}" id="editform" method="POST" class="form-horizontal">
           {{ csrf_field() }}
           @method('PUT')
           @include('proposal_budget.form')

@@ -29,4 +29,8 @@ class Budget extends Model
     public function proposal_budget() {
         return $this->hasMany('App\Models\ProposalBudget', 'budget__c', 'sfid');
     }
+
+    public function expense_budget() {
+        return $this->hasMany('App\Models\ExpenseBudget', 'budget__c', 'sfid');
+    }
 }

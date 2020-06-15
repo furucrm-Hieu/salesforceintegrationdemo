@@ -18,7 +18,7 @@ class Expense extends Model
     //     return $this->belongsToMany('App\Models\Budget', 'proposal_budget', 'proposal_id', 'budget_id')->withPivot('proposal_id', 'budget_id', 'amount');
     // }
 
-    // public function proposal_budget() {
-    //     return $this->hasMany('App\Models\ProposalBudget', 'proposal__c', 'sfid');
-    // }
+    public function expense_budget() {
+        return $this->hasMany('App\Models\ExpenseBudget', 'expense__c', 'sfid');
+    }
 }

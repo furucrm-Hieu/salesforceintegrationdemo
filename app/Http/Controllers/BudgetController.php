@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Budget;
 use App\Models\ProposalBudget;
+use App\Models\ExpenseBudget;
 use App\Models\ApiConnect;
 use App\Helpers\HelperHandleTotalAmount;
 use App\Helpers\HelperGuzzleService;
@@ -17,13 +18,15 @@ class BudgetController extends Controller
 {
     protected $mBudget;
     protected $mProposalBudget;
+    protected $mExpenseBudget;
     protected $hHelperHandleTotalAmount;
     protected $hHelperGuzzleService;
     protected $vApiConnect;
 
-    public function __construct(Budget $mBudget, ProposalBudget $mProposalBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
+    public function __construct(Budget $mBudget, ProposalBudget $mProposalBudget, ExpenseBudget $mExpenseBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
         $this->mBudget = $mBudget;
         $this->mProposalBudget = $mProposalBudget;
+        $this->mExpenseBudget = $mExpenseBudget;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
         $this->hHelperGuzzleService = $hHelperGuzzleService;
         $this->vApiConnect = ApiConnect::where('expired', false)->latest()->first();
@@ -141,9 +144,18 @@ class BudgetController extends Controller
 
             $budget = $this->mBudget->findOrFail($id);
             $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
-            $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $budget->sfid);
-
-            return view('budget.detail', ['budget' => $budget, 'proposal' => $proposal_budget, 'listApprovalProcesses' => $listApprovalProcesses]);
+            $expense_budget = $this->mExpenseBudget->where('budget__c', $budget->sfid)->with('expense')->get();
+            $listApprovalProcesses = [];
+            if($budget->status_approve == true) {
+                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $budget->sfid);
+            }
+            
+            return view('budget.detail', [
+                'budget' => $budget, 
+                'proposal' => $proposal_budget, 
+                'expense' => $expense_budget,
+                'listApprovalProcesses' => $listApprovalProcesses
+            ]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - BudgetController');
             abort(404);
@@ -290,10 +302,13 @@ class BudgetController extends Controller
             $listProposalBudget = $this->mProposalBudget->where('budget__c', $budget->sfid);
             $arrProposal = $listProposalBudget->pluck('proposal__c')->toArray();
             $listProposalBudget->delete();
+            $listExpenseBudget = $this->mExpenseBudget->where('budget__c', $budget->sfid);
+            $arrExpense = $listExpenseBudget->pluck('expense__c')->toArray();
+            $listExpenseBudget->delete();
             $budget->delete();
             DB::commit();
 
-            $this->hHelperHandleTotalAmount->caseDeleteParent('budget', $arrProposal);
+            $this->hHelperHandleTotalAmount->caseDeleteParent('budget', $arrProposal, $arrExpense);
 
             if($request->ajax()){
                 return response()->json(['success' => true]);
