@@ -21,7 +21,7 @@
             <div class="form-group">
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
-                @if($proposalBudget->status_approve == false)
+                @if($proposalBudget->status_approve == HelperDateTime::PENDING)
                 <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
                 <a class="btn btn-primary" href="{{url('/proposal-budget/'.$proposalBudget->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
@@ -78,33 +78,7 @@
 
 
       <!-- start box approval processes -->
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title"><b>Approval Process Flow</b></h3>
-        </div>
-        <div class="box-body">
-          <table class="table table-bordered table-striped">
-            <thead>
-            <tr>
-              <th>Step Name</th>
-              <th style="width: 300px">Date</th>
-              <th style="width: 300px">Status</th>
-              <th>Assigned To</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($listApprovalProcesses as $approval)
-              <tr>
-                <td>{{$approval['StepName']}}</td>
-                <td>{{$approval['Date']}}</td>
-                <td>{{$approval['Status']}}</td>
-                <td>{{$approval['AssignedTo']}}</td>
-              </tr>
-            @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
+      @include('component.list_approval_processes')
       <!-- end box approval processes -->
 
 

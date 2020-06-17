@@ -34,7 +34,7 @@
                 <td>{{ number_format($value->amount__c, 2)}}</td>
                 <td>
                   <a href="{{ url('/expense-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-                  @if($value->status_approve == false)
+                  @if($value->status_approve == HelperDateTime::PENDING)
                   <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
                   <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}') " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                   </a>

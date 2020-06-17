@@ -11,6 +11,7 @@ use App\Models\ExpenseBudget;
 use App\Models\User;
 use App\Helpers\HelperHandleTotalAmount;
 use App\Helpers\HelperGuzzleService;
+use App\Helpers\HelperConvertDateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,13 +22,15 @@ class BudgetController extends Controller
     protected $mExpenseBudget;
     protected $hHelperHandleTotalAmount;
     protected $hHelperGuzzleService;
+    protected $hHelperConvertDateTime;
 
-    public function __construct(Budget $mBudget, ProposalBudget $mProposalBudget, ExpenseBudget $mExpenseBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
+    public function __construct(Budget $mBudget, ProposalBudget $mProposalBudget, ExpenseBudget $mExpenseBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService, HelperConvertDateTime $hHelperConvertDateTime) {
         $this->mBudget = $mBudget;
         $this->mProposalBudget = $mProposalBudget;
         $this->mExpenseBudget = $mExpenseBudget;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
         $this->hHelperGuzzleService = $hHelperGuzzleService;
+        $this->hHelperConvertDateTime = $hHelperConvertDateTime;
     }
 
     /**
@@ -115,6 +118,7 @@ class BudgetController extends Controller
             $requestData['name'] = $request->input('name');
             $requestData['year__c'] = $request->input('year__c');
             $requestData['total_amount__c'] = 0;
+            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['sfid'] = $sfid;
 
             $budget = $this->mBudget->create($requestData);
@@ -143,8 +147,11 @@ class BudgetController extends Controller
             $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
             $expense_budget = $this->mExpenseBudget->where('budget__c', $budget->sfid)->with('expense')->get();
             $listApprovalProcesses = [];
-            if($budget->status_approve == true) {
+            if($budget->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $budget->sfid);
+                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                $budget->status_approve = $newStatus;
+                $budget->save();
             }
 
             return view('budget.detail', [
@@ -168,10 +175,12 @@ class BudgetController extends Controller
     public function edit($id)
     {
         try {
+
+            $apiConnect = Auth::user()->accessToken;
             $budget = $this->mBudget->findOrFail($id);
 
-            if($budget->status_approve) return redirect('/budget');
-            return view('budget.edit', ['budget' => $budget]);
+            // if($budget->status_approve) return redirect('/budget');
+            return view('budget.edit', ['budget' => $budget, 'apiConnect' => $apiConnect]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Edit - BudgetController');
             abort(404);
@@ -328,7 +337,7 @@ class BudgetController extends Controller
             $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $budget->sfid);
 
             if($response->success == true) {
-                $budget->status_approve = true;
+                $budget->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $budget->save();
                 return redirect('budget/'. $id);
             }

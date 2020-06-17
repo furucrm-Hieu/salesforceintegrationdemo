@@ -74,7 +74,7 @@ class ProposalController extends Controller
             $sfid = '';
 
             // Check access token in database is exist.
-            if(Auth::user()->accessToken) {
+            if(!empty(Auth::user()->accessToken)) {
 
                 $dataProposal = [];
                 $dataProposal['Name'] = $request->input('name');
@@ -122,6 +122,7 @@ class ProposalController extends Controller
             $requestData['year__c'] = $request->input('year');
             $requestData['details__c'] = $request->input('detail');
             $requestData['total_amount__c'] = 0;
+            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['approved_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('approved_at'));
             $requestData['proposed_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('proposed_at'));
             $requestData['sfid'] = $sfid;
@@ -152,8 +153,11 @@ class ProposalController extends Controller
             $proposal = $this->mProposal::findOrFail($id);
             $listBudget = $this->mProposalBudget->where('proposal__c', $proposal->sfid)->with('budget')->get();
             $listApprovalProcesses = [];
-            if($proposal->status_approve == true) {
+            if($proposal->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $proposal->sfid);
+                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                $proposal->status_approve = $newStatus;
+                $proposal->save();
             }
 
             return view('proposal.show', compact('proposal', 'listBudget', 'listApprovalProcesses'));
@@ -174,7 +178,7 @@ class ProposalController extends Controller
     {
         try {
 
-            $apiConnect = Auth::user();
+            $apiConnect = Auth::user()->accessToken;
             $proposal = $this->mProposal::findOrFail($id);
 
             return view('proposal.edit', compact('proposal', 'apiConnect'));
@@ -208,7 +212,7 @@ class ProposalController extends Controller
             $flagUpdate = false;
 
             // Check and update to salesforce.
-            if(Auth::user()->accessToken) {
+            if(!empty(Auth::user()->accessToken)) {
                 $dataProposal = [];
                 $dataProposal['Name'] = $request->input('name');
                 $dataProposal['Year__c'] = $request->input('year');
@@ -280,7 +284,7 @@ class ProposalController extends Controller
             // Flag flagDelete check delete salesforce true or false.
             $flagDelete = false;
 
-            if(Auth::user()->accessToken) {
+            if(!empty(Auth::user()->accessToken)) {
 
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Proposal__c/'.$proposal->sfid, Auth::user()->accessToken);
 
@@ -344,7 +348,7 @@ class ProposalController extends Controller
             $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $proposal->sfid);
 
             if($response->success == true) {
-                $proposal->status_approve = true;
+                $proposal->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $proposal->save();
                 return redirect('proposal/'. $id);
             }

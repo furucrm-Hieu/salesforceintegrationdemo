@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Expense;
 use App\Models\Budget;
 use App\Models\ExpenseBudget;
-use App\Models\ApiConnect;
+use Illuminate\Support\Facades\Auth;
 use App\Helpers\HelperConvertDateTime;
 use App\Helpers\HelperHandleTotalAmount;
 use App\Helpers\HelperGuzzleService;
@@ -32,7 +32,6 @@ class ExpenseController extends Controller
         $this->hHelperConvertDateTime = $hHelperConvertDateTime;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
         $this->hHelperGuzzleService = $hHelperGuzzleService;
-        $this->vApiConnect = ApiConnect::where('expired', false)->latest()->first();
     }
 
     /**
@@ -53,7 +52,7 @@ class ExpenseController extends Controller
      */
     public function create(Request $request)
     {   
-        $apiConnect = $this->vApiConnect;
+        $apiConnect = Auth::user()->accessToken;
         return view('expense.create', compact('apiConnect'));
     }
 
@@ -77,7 +76,7 @@ class ExpenseController extends Controller
             $sfid = '';
 
             // Check access token in database is exist.
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+            if(!empty(Auth::user()->accessToken)) {
 
                 $dataExpense = [];
                 $dataExpense['Name'] = $request->input('name');
@@ -88,13 +87,13 @@ class ExpenseController extends Controller
                 $dataExpense['Approval_Status__c'] = 'Pending';
 
                 // Call api insert proposal.
-                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Expense__c/', $this->vApiConnect->accessToken, $dataExpense);
+                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Expense__c/', Auth::user()->accessToken, $dataExpense);
                 
                 // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
                     // if status code 401, call again insert
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
 
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -125,6 +124,7 @@ class ExpenseController extends Controller
             $requestData['year__c'] = $request->input('year');
             $requestData['details__c'] = $request->input('detail');
             $requestData['total_amount__c'] = 0;
+            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['approved_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('approved_at'));
             $requestData['proposed_at__c'] = $this->hHelperConvertDateTime->convertDateTimeJpToUtc($request->input('proposed_at'));
             $requestData['sfid'] = $sfid;
@@ -155,9 +155,12 @@ class ExpenseController extends Controller
             $expense = $this->mExpense::findOrFail($id);
             $listBudget = $this->mExpenseBudget->where('expense__c', $expense->sfid)->with('budget')->get();
             $listApprovalProcesses = [];
-            if($expense->status_approve == true) {
-                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $expense->sfid);
-            } 
+            if($expense->status_approve != $this->hHelperConvertDateTime::PENDING) {
+                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $expense->sfid);
+                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                $expense->status_approve = $newStatus;
+                $expense->save();
+            }
 
             return view('expense.show', compact('expense', 'listBudget', 'listApprovalProcesses'));
 
@@ -177,9 +180,8 @@ class ExpenseController extends Controller
     {
         try {
 
-            $apiConnect = $this->vApiConnect;
+            $apiConnect = Auth::user()->accessToken;
             $expense = $this->mExpense::findOrFail($id);
-
             return view('expense.edit', compact('expense', 'apiConnect'));
 
         } catch (\Exception $ex) {
@@ -211,7 +213,7 @@ class ExpenseController extends Controller
             $flagUpdate = false;
 
             // Check and update to salesforce.
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+            if(!empty(Auth::user()->accessToken)) {
                 $dataExpense = [];
                 $dataExpense['Name'] = $request->input('name');
                 $dataExpense['Year__c'] = $request->input('year');
@@ -220,13 +222,13 @@ class ExpenseController extends Controller
                 $dataExpense['Proposed_At__c'] = $this->hHelperConvertDateTime->convertDateTimeCallApi($request->input('proposed_at'));
 
                 // Call api update expense.
-                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Expense__c/'.$expense->sfid, $this->vApiConnect->accessToken, $dataExpense);
+                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Expense__c/'.$expense->sfid, Auth::user()->accessToken, $dataExpense);
 
                 // if update sf false.
                 if(isset($response->success) && $response->success == false) {
                     // if status code 401, call again insert
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
 
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -283,13 +285,13 @@ class ExpenseController extends Controller
             // Flag flagDelete check delete salesforce true or false.
             $flagDelete = false;
 
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+            if(!empty(Auth::user()->accessToken)) {
 
-                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Expense__c/'.$expense->sfid, $this->vApiConnect->accessToken);
+                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Expense__c/'.$expense->sfid, Auth::user()->accessToken);
                 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
     
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -344,10 +346,10 @@ class ExpenseController extends Controller
             $id = $request->input('id');
             $expense = $this->mExpense::findOrFail($id);
 
-            $response = $this->hHelperGuzzleService->submitApproval($this->vApiConnect->accessToken, $expense->sfid);
+            $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $expense->sfid);
 
             if($response->success == true) {
-                $expense->status_approve = true;
+                $expense->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $expense->save();
                 return redirect('expense/'. $id);
             }

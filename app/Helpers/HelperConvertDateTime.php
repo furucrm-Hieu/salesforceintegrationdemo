@@ -5,6 +5,10 @@ use Carbon\Carbon;
 
 class HelperConvertDateTime 
 {
+  const PENDING = 'Pending';
+  const SUBMIT = 'Submit';
+  const APPROVED = 'Approved';
+  
   public static function convertDateTimeJpToUtc(string $string)
   {
     $dateTimeJP = Carbon::createFromFormat('Y-m-d H:i:s', $string);

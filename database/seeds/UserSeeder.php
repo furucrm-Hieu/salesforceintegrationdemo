@@ -19,6 +19,20 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => bcrypt('123456'),
                 'remember_token' => Str::random(10),
+            ],
+            [
+                'name' => 'generalmanager',
+                'email' => 'generalmanager@gmail.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('123456'),
+                'remember_token' => Str::random(10),
+            ],
+            [
+                'name' => 'ceo',
+                'email' => 'ceo@gmail.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('123456'),
+                'remember_token' => Str::random(10),
             ]
         ];
         

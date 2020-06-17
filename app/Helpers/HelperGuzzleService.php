@@ -4,10 +4,11 @@ namespace App\Helpers;
 
 use Carbon\Carbon;
 use DB, Session;
-use App\Models\ApiConnect;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\{Client, RequestOptions};
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class HelperGuzzleService
 {
@@ -100,7 +101,7 @@ class HelperGuzzleService
       $token = json_decode($response->body());
 
       DB::beginTransaction();
-      $api = ApiConnect::latest()->first();
+      $api = User::findOrFail(Auth::user()->id);
       $api->fill(['accessToken' => $token->access_token]);
       $api->save();
       DB::commit();

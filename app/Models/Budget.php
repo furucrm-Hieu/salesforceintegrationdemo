@@ -12,7 +12,7 @@ class Budget extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name', 'year__c', 'total_amount__c', 'sfid'
+        'name', 'year__c', 'total_amount__c', 'sfid', 'status_approve'
     ];
 
     /**

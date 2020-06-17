@@ -37,7 +37,7 @@
                 <td>{{ $value->year__c }}</td>
                 <td>{{ number_format($value->total_amount__c, 2)}}</td>
                 <td>
-                  @if($value->status_approve == false)
+                  @if($value->status_approve == HelperDateTime::PENDING)
                   <a href="{{ url('/expense/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
                   <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense', '{{$value->id}}') " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                   </a>
@@ -48,13 +48,9 @@
             </tbody>
           </table>
         </div>
-        <!-- /.box-body -->
       </div>
-      <!-- /.box -->
     </div>
-    <!-- /.col -->
   </div>
-  <!-- /.row -->
 </section>
 
 @endsection

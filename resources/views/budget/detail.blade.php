@@ -6,7 +6,7 @@
 @stop
 
 @section('action')
-    @if($budget->status_approve == false)
+    @if($budget->status_approve == HelperDateTime::PENDING)
         <div class="col-sm-5">
             <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
             <a class="btn btn-primary" href="{{url('/budget/'.$budget->id.'/edit')}}">@lang("messages.Edit")</a>
@@ -64,7 +64,9 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="button-footer" style="height: 0px">
+            @if($budget->status_approve == HelperDateTime::APPROVED)
             <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/budget-'.$budget->id)}}">@lang("messages.Create_Proposal_Budget")</a>
+            @endif
         </div>
         <table class="table table-bordered table-striped" id="proposalBudget">
             <thead>
@@ -81,7 +83,7 @@
                         <td>{{ number_format($single->amount__c, 2)}}</td>
                         <td>
                             <a href="{{ url('/proposal-budget/' . $single->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-                            @if($single->status_approve == false)
+                            @if($single->status_approve == HelperDateTime::PENDING)
                             <a href="{{ url('/proposal-budget/' . $single->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
                             <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$single->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                             </a>
@@ -103,7 +105,9 @@
     </div>
     <div class="box-body">
       <div class="button-footer" style="height: 0px">
+        @if($budget->status_approve == HelperDateTime::APPROVED)
         <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/budget-'.$budget->id)}}">Create Expense Budget</a>
+        @endif
       </div>
       <table class="table table-bordered table-striped" id="expenseBudget">
         <thead>
@@ -120,7 +124,7 @@
           <td>{{ number_format($value->amount__c, 2)}}</td>
           <td>
             <a href="{{ url('/expense-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-            @if($value->status_approve == false)
+            @if($value->status_approve == HelperDateTime::PENDING)
             <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
             <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
             </a>
@@ -135,33 +139,7 @@
 <!-- end box junction -->
 
 <!-- start box approval processes -->
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title"><b>Approval Process Flow</b></h3>
-    </div>
-    <div class="box-body">
-        <table class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th>Step Name</th>
-            <th style="width: 300px">Date</th>
-            <th style="width: 300px">Status</th>
-            <th>Assigned To</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($listApprovalProcesses as $approval)
-            <tr>
-            <td>{{$approval['StepName']}}</td>
-            <td>{{$approval['Date']}}</td>
-            <td>{{$approval['Status']}}</td>
-            <td>{{$approval['AssignedTo']}}</td>
-            </tr>
-        @endforeach
-        </tbody>
-        </table>
-    </div>
-</div>
+@include('component.list_approval_processes')
 <!-- end box approval processes -->
 @stop
 
