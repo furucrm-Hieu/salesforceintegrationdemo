@@ -51,25 +51,12 @@ class AuthController extends Controller
     }
 
     public function userProfile() {
-        $uri = config('authenticate.api_uri');
-        $user = User::findorFail(Auth::user()->id);
-        $api = ApiConnect::latest()->first();
         try {
-            DB::beginTransaction();
-            if(isset($api)) {
-                $reponse = Http::withHeaders([
-                    'Authorization' => 'Bearer '.$api->accessToken,
-                ])->get($uri.'/Proposal__c');
-                if($reponse->status() == 401) {
-                    $api->expired = true;
-                    $api->save();
-                }
-            }
-            DB::commit();
+            $user = User::findorFail(Auth::user()->id);
         }catch(\Exception $ex) {
             Log::info($ex->getMessage().'- userProfile - AuthController');
             DB::rollback();
         }
-        return view('user.profile', compact('api', 'user'));
+        return view('user.profile', compact('user'));
     }
 }

@@ -13,13 +13,13 @@ class CreateGroupProposalBudget extends Migration
      */
     public function up()
     {
-        Schema::create('api_connect', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('accessToken')->nullable();
-            $table->string('refreshToken')->nullable();
-            $table->boolean('expired')->default(false);
-            $table->timestamps();
-        });
+        // Schema::create('api_connect', function (Blueprint $table) {
+        //     $table->increments('id');
+        //     $table->string('accessToken')->nullable();
+        //     $table->string('refreshToken')->nullable();
+        //     $table->boolean('expired')->default(false);
+        //     $table->timestamps();
+        // });
 
         Schema::create('proposal__c', function (Blueprint $table) {
             $table->increments('id');
@@ -86,7 +86,7 @@ class CreateGroupProposalBudget extends Migration
     //  */
     public function down()
     {
-        Schema::dropIfExists('api_connect');
+        // Schema::dropIfExists('api_connect');
         Schema::dropIfExists('proposal__c');
         Schema::dropIfExists('budget__c');
         Schema::dropIfExists('proposal_budget__c');

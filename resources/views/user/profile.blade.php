@@ -28,11 +28,11 @@
                 <div class="row" style="height: 200px;">
                     <div class="centered">
                         <div class="col-xs-6 col-xs-offset-3" style="text-align: center; margin-bottom:10px">
-                            <h4>@lang('messages.Status'): {{ isset($api) ? $api->expired ? __('messages.Disconnected') :  __('messages.Connected') : __('messages.Disconnected') }}</h4>
+                            <h4>@lang('messages.Status'): {{ isset($user->accessToken) ? __('messages.Connected') : __('messages.Disconnected') }}</h4>
                         </div>
                         <div class="col-xs-6 col-xs-offset-3">
-                            <a id="buttonState" href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($api) ? $api->expired ? 'btn-success' : 'btn-danger' : 'btn-success' }}">
-                                {{ isset($api) ? $api->expired ? __('messages.Connect') :  __('messages.Disconnect') : __('messages.Connect') }}
+                            <a id="buttonState" href="{{ route('authSalesforce') }}" class="btn btn-block {{ isset($user->accessToken) ? 'btn-danger' : 'btn-success' }}">
+                                {{ isset($user->accessToken) ?  __('messages.Disconnect') : __('messages.Connect') }}
                             </a>
                         </div>
                     </div>
