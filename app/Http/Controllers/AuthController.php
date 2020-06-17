@@ -52,7 +52,7 @@ class AuthController extends Controller
 
     public function userProfile() {
         try {
-            $user = User::findorFail(Auth::user()->id);
+            $user = Auth::user();
         }catch(\Exception $ex) {
             Log::info($ex->getMessage().'- userProfile - AuthController');
             DB::rollback();

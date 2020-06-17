@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\Budget;
 use App\Models\ProposalBudget;
 use App\Models\ExpenseBudget;
-use App\Models\ApiConnect;
+use App\Models\User;
 use App\Helpers\HelperHandleTotalAmount;
 use App\Helpers\HelperGuzzleService;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
@@ -21,7 +21,6 @@ class BudgetController extends Controller
     protected $mExpenseBudget;
     protected $hHelperHandleTotalAmount;
     protected $hHelperGuzzleService;
-    protected $vApiConnect;
 
     public function __construct(Budget $mBudget, ProposalBudget $mProposalBudget, ExpenseBudget $mExpenseBudget, HelperHandleTotalAmount $hHelperHandleTotalAmount, HelperGuzzleService $hHelperGuzzleService) {
         $this->mBudget = $mBudget;
@@ -29,7 +28,6 @@ class BudgetController extends Controller
         $this->mExpenseBudget = $mExpenseBudget;
         $this->hHelperHandleTotalAmount = $hHelperHandleTotalAmount;
         $this->hHelperGuzzleService = $hHelperGuzzleService;
-        $this->vApiConnect = ApiConnect::where('expired', false)->latest()->first();
     }
 
     /**
@@ -50,7 +48,7 @@ class BudgetController extends Controller
      */
     public function create(Request $request)
     {
-        $apiConnect = $this->vApiConnect;
+        $apiConnect = Auth::user()->accessToken;
         return view('budget.create', compact('apiConnect'));
     }
 
@@ -73,23 +71,20 @@ class BudgetController extends Controller
 
             // Flag sfid check insert salesforce true or false.
             $sfid = '';
-
-            // Check and insert to salesforce.
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
-
+            if(Auth::user()->accessToken) {
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
                 $dataBudget['Approval_Status__c'] = 'Pending';
 
                 // Call api insert budget.
-                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', $this->vApiConnect->accessToken, $dataBudget);
+                $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', Auth::user()->accessToken, $dataBudget);
 
                 // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
                     // if status code 401, call again insert
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
 
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -107,6 +102,8 @@ class BudgetController extends Controller
                     $sfid = $response->id;
                 }
             }
+
+
 
             // Check if sfid till empty, return false.
             if(empty($sfid)) {
@@ -147,12 +144,12 @@ class BudgetController extends Controller
             $expense_budget = $this->mExpenseBudget->where('budget__c', $budget->sfid)->with('expense')->get();
             $listApprovalProcesses = [];
             if($budget->status_approve == true) {
-                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval($this->vApiConnect->accessToken, $budget->sfid);
+                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $budget->sfid);
             }
-            
+
             return view('budget.detail', [
-                'budget' => $budget, 
-                'proposal' => $proposal_budget, 
+                'budget' => $budget,
+                'proposal' => $proposal_budget,
                 'expense' => $expense_budget,
                 'listApprovalProcesses' => $listApprovalProcesses
             ]);
@@ -171,12 +168,10 @@ class BudgetController extends Controller
     public function edit($id)
     {
         try {
-
-            $apiConnect = $this->vApiConnect;
             $budget = $this->mBudget->findOrFail($id);
-            
+
             if($budget->status_approve) return redirect('/budget');
-            return view('budget.edit', ['budget' => $budget, 'apiConnect' => $apiConnect]);
+            return view('budget.edit', ['budget' => $budget]);
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Edit - BudgetController');
             abort(404);
@@ -201,21 +196,21 @@ class BudgetController extends Controller
             }
 
             $budget = $this->mBudget::findOrFail($id);
-            
+
             // Flag flagUpdate check update salesforce true or false.
             $flagUpdate = false;
 
             // Check and update to salesforce.
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+            if(Auth::user()->accessToken) {
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
 
-                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken, $dataBudget);
+                $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, Auth::user()->accessToken, $dataBudget);
                 if(isset($response->success) && $response->success == false) {
 
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
 
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -267,13 +262,13 @@ class BudgetController extends Controller
             // Flag flagDelete check delete salesforce true or false.
             $flagDelete = false;
 
-            if($this->vApiConnect && $this->vApiConnect->expired == false) {
+            if(Auth::user()->accessToken) {
 
-                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, $this->vApiConnect->accessToken);
+                $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Budget__c/'.$budget->sfid, Auth::user()->accessToken);
 
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
-                        $resFreshToken = $this->hHelperGuzzleService::refreshToken($this->vApiConnect->refreshToken);
+                        $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
 
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
@@ -330,7 +325,7 @@ class BudgetController extends Controller
         try {
             $id = $request->input('id');
             $budget = $this->mBudget::findOrFail($id);
-            $response = $this->hHelperGuzzleService->submitApproval($this->vApiConnect->accessToken, $budget->sfid);
+            $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $budget->sfid);
 
             if($response->success == true) {
                 $budget->status_approve = true;
