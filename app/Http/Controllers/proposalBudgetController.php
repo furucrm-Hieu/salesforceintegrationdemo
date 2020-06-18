@@ -243,8 +243,12 @@ class ProposalBudgetController extends Controller
 
             $requestData = [];
             $requestData['amount__c'] = $request->input('amount');
-
             $proposalBudget->update($requestData);
+
+            $proposalSfid = $request->input('proposal__c');
+            $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
+            $proposal->status_approve = $this->hHelperConvertDateTime::PENDING;
+            $proposal->save();
 
             DB::commit();
             

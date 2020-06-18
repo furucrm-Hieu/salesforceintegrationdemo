@@ -240,8 +240,12 @@ class ExpenseBudgetController extends Controller
 
             $requestData = [];
             $requestData['amount__c'] = $request->input('amount');
-
             $expenseBudget->update($requestData);
+
+            $expenseSfid = $request->input('expense__c');
+            $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
+            $expense->status_approve = $this->hHelperConvertDateTime::PENDING;
+            $expense->save();
 
             DB::commit();
 

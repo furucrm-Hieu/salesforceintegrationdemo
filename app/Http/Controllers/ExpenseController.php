@@ -348,6 +348,10 @@ class ExpenseController extends Controller
 
             $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $expense->sfid);
 
+            if($response->success == false && $response->statusCode == 400) {
+                return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+            }
+            
             if($response->success == true) {
                 $expense->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $expense->save();

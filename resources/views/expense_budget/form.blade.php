@@ -4,12 +4,15 @@
   
   <div class="form-group">
     <label class="col-sm-2 control-label">Expense<span class="red"> *</span> </label>
-    <select class="form-control custom-select" name="expense__c" {{($type=='edit') ? 'disabled' : 'required'}}>
+    <select class="form-control custom-select" disabled>
       <option value=""> -- @lang("messages.None") --</option>
       @foreach($expenses as $key => $value)
         <option value="{{$key}}" {{ ($key == $expenseBudget->expense__c) ? 'selected' : '' }}>{{$value}}</option>
       @endforeach
     </select>
+
+    <input type="hidden" name="expense__c" value="{{$expenseBudget->expense__c}}">
+
   </div>
 
   <div class="form-group">

@@ -5,9 +5,6 @@
   <h1>
     @lang('messages.Budget')
   </h1>
-  <!-- <ol class="breadcrumb" style="top:5px !important">
-    <li><a class="btn btn-block btn-primary" href="{{ route('budget.create') }}" style="color: #fff;">@lang('messages.Create_Budget')</a></li>
-  </ol> -->
 </section>
 <!-- Main content -->
 <section class="content">
@@ -26,7 +23,7 @@
               <th>@lang('messages.Name')</th>
               <th>@lang('messages.Year')</th>
               <th>@lang('messages.Total_Amount')</th>
-              <th>@lang('messages.Action')</th>
+              <!-- <th>@lang('messages.Action')</th> -->
             </tr>
             </thead>
             <tbody>
@@ -35,13 +32,11 @@
                 <td><a href="{{ route('budget.show', ['budget'=>$budget->id]) }}" >{{ $budget->name }}</a></td>
                 <td>{{ $budget->year__c }}</td>
                 <td>{{ number_format($budget->total_amount__c, 2)}}</td>
-                <td>
-                  @if (!$budget->status_approve)
-                        <a href="{{ url('/budget/' . $budget->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                        <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'budget', {{$budget->id}}) " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-                  @endif
+                <!-- <td>
+                    <a href="{{ url('/budget/' . $budget->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                    <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'budget', {{$budget->id}}) " title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
                   </a>
-                </td>
+                </td> -->
               </tr>
               @endforeach
             </tbody>

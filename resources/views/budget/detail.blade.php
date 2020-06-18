@@ -67,7 +67,6 @@
                 <tr>
                     <th>@lang('messages.Proposal_Name')</th>
                     <th>@lang('messages.Amount')</th>
-                    <th style="width: 120px">@lang("messages.Action")</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,14 +74,6 @@
                     <tr>
                         <td><a href="{{ url('/proposal/' . $single->proposal->id ) }}">{{$single->proposal->name}}</a></td>
                         <td>{{ number_format($single->amount__c, 2)}}</td>
-                        <td>
-                            <a href="{{ url('/proposal-budget/' . $single->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-                            @if($single->status_approve == HelperDateTime::PENDING)
-                            <a href="{{ url('/proposal-budget/' . $single->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                            <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$single->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-                            </a>
-                            @endif
-                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -104,7 +95,6 @@
         <tr>
           <th>@lang("messages.Budget_Name")</th>
           <th>@lang("messages.Amount")</th>
-          <th style="width: 120px">@lang("messages.Action")</th>
         </tr>
         </thead>
         <tbody>
@@ -112,14 +102,6 @@
         <tr>
           <td><a href="{{ url('/expense/' . $value->expense->id ) }}">{{$value->expense->name}}</a></td>
           <td>{{ number_format($value->amount__c, 2)}}</td>
-          <td>
-            <a href="{{ url('/expense-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-            @if($value->status_approve == HelperDateTime::PENDING)
-            <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-            <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-            </a>
-            @endif
-          </td>
         </tr>
         @endforeach
         </tbody>           

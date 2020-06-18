@@ -21,8 +21,10 @@
             <div class="form-group">
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
-                @if($proposal->status_approve == HelperDateTime::PENDING)
+                @if($proposal->status_approve != HelperDateTime::SUBMIT)
                 <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                @endif
+                @if($proposal->status_approve == HelperDateTime::PENDING)
                 <a class="btn btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @endif

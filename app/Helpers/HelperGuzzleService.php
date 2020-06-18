@@ -159,6 +159,11 @@ class HelperGuzzleService
       ])->post($url, [
         "requests" => [$dataSubmit]
       ]);
+
+      if($response->status() == 400) {
+        $data = json_decode($response->getBody()->getContents());
+        return json_decode('{"success" : false, "statusCode" : 400, "message" : "'.$data[0]->message.'"}');
+      }
       
       if($response->status() == 200) {
         return json_decode('{"success" : true}');

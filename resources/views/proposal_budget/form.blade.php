@@ -4,12 +4,15 @@
 
   <div class="form-group">
     <label class="col-sm-2 control-label">@lang("messages.Proposal")<span class="red"> *</span> </label>
-    <select class="form-control custom-select" name="proposal__c" required {{($type=='edit') ? 'disabled' : 'required'}}>
+    <select class="form-control custom-select" disabled>
       <option value=""> -- @lang("messages.None") --</option>
       @foreach($proposals as $key => $value)
         <option value="{{$key}}" {{ ($key == $proposalBudget->proposal__c) ? 'selected' : '' }}>{{$value}}</option>
       @endforeach
     </select>
+
+    <input type="hidden" name="proposal__c" value="{{$proposalBudget->proposal__c}}">
+
   </div>
 
   <div class="form-group">

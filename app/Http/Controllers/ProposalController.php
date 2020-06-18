@@ -347,6 +347,10 @@ class ProposalController extends Controller
 
             $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $proposal->sfid);
 
+            if($response->success == false && $response->statusCode == 400) {
+                return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+            }
+
             if($response->success == true) {
                 $proposal->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $proposal->save();
