@@ -6,13 +6,10 @@
 @stop
 
 @section('action')
-    @if($budget->status_approve == HelperDateTime::PENDING)
-        <div class="col-sm-5">
-            <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
-            <a class="btn btn-primary" href="{{url('/budget/'.$budget->id.'/edit')}}">@lang("messages.Edit")</a>
-            <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
-        </div>
-    @endif
+    <div class="col-sm-5">
+        <!-- <a class="btn btn-primary" href="{{url('/budget/'.$budget->id.'/edit')}}">@lang("messages.Edit")</a> -->
+        <!-- <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button> -->
+    </div>
 @stop
 
 @section('detailData')
@@ -64,9 +61,6 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="button-footer" style="height: 0px">
-            @if($budget->status_approve == HelperDateTime::APPROVED)
-            <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/budget-'.$budget->id)}}">@lang("messages.Create_Proposal_Budget")</a>
-            @endif
         </div>
         <table class="table table-bordered table-striped" id="proposalBudget">
             <thead>
@@ -101,13 +95,9 @@
 <div class="box">
     <div class="box-header">
       <h3 class="box-title"><b>Expense Budget</b></h3>
-
     </div>
     <div class="box-body">
       <div class="button-footer" style="height: 0px">
-        @if($budget->status_approve == HelperDateTime::APPROVED)
-        <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/budget-'.$budget->id)}}">Create Expense Budget</a>
-        @endif
       </div>
       <table class="table table-bordered table-striped" id="expenseBudget">
         <thead>
@@ -138,18 +128,10 @@
 </div>
 <!-- end box junction -->
 
-<!-- start box approval processes -->
-@include('component.list_approval_processes')
-<!-- end box approval processes -->
 @stop
 
 @section('JS')
     <script>
-        function postSubmitApproval(event) {
-            event.preventDefault();
-            $('#overlay').fadeIn();
-            $('#submitApproval-form').submit();
-        }
 
         function getConfirmDelete(event) {
             event.preventDefault();

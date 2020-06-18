@@ -105,7 +105,7 @@
         </div>
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
-            @if($proposal->status_approve == HelperDateTime::APPROVED)
+            @if($proposal->status_approve != HelperDateTime::SUBMIT)
             <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/proposal-'.$proposal->id)}}">@lang("messages.Create_Proposal_Budget")</a>
             @endif
           </div>
@@ -123,12 +123,11 @@
               <td><a href="{{ url('/budget/' . $value->budget->id ) }}">{{$value->budget->name}}</a></td>
               <td>{{ number_format($value->amount__c, 2)}}</td>
               <td>
-                <a href="{{ url('/proposal-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-                @if($value->status_approve == HelperDateTime::PENDING)
+                @if($proposal->status_approve != HelperDateTime::SUBMIT)
                 <a href="{{ url('/proposal-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-                </a>
                 @endif
+                <!-- <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                </a> -->
               </td>
             </tr>
             @endforeach
@@ -141,7 +140,6 @@
       <!-- start box approval processes -->
       @include('component.list_approval_processes')
       <!-- end box approval processes -->
-
 
     </div>
 

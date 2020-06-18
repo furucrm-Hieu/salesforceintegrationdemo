@@ -354,7 +354,7 @@ class ExpenseController extends Controller
                 return redirect('expense/'. $id);
             }
 
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
+            return redirect()->back()->withErrors(['message' => __('messages.Token_Error')]);
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- submitApproval - ExpenseController');

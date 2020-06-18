@@ -19,17 +19,18 @@ Route::group(['middleware' => ['checkAuth']], function() {
     Route::post('/proposal-submit-approval', 'ProposalController@submitApproval');
 
     Route::resource('/budget', 'BudgetController');
-    Route::post('/budget-submit-approval', 'BudgetController@submitApproval');
-
-    Route::resource('/proposal-budget', 'ProposalBudgetController');
-    Route::post('/junctionPB-submit-approval', 'ProposalBudgetController@submitApproval');
-    Route::get('/junctionPB/{id}', 'ProposalBudgetController@createJunction');
 
     Route::resource('/expense', 'ExpenseController');
     Route::post('/expense-submit-approval', 'ExpenseController@submitApproval');
 
-    Route::resource('/expense-budget', 'ExpenseBudgetController');
-    Route::post('/junctionEB-submit-approval', 'ExpenseBudgetController@submitApproval');
+    Route::resource('/proposal-budget', 'ProposalBudgetController')->except([
+        'index', 'create', 'show'
+    ]);
+    Route::get('/junctionPB/{id}', 'ProposalBudgetController@createJunction');
+
+    Route::resource('/expense-budget', 'ExpenseBudgetController')->except([
+        'index', 'create', 'show'
+    ]);
     Route::get('/junctionEB/{id}', 'ExpenseBudgetController@createJunction');
 
     Route::get('lang/{locale}', 'AuthController@changeLocalization');

@@ -34,39 +34,6 @@ class ExpenseBudgetController extends Controller
         $this->hHelperConvertDateTime = $hHelperConvertDateTime;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-    	$list_expense_budget = $this->mExpenseBudget->with(['budget', 'expense'])->get();
-        return view('expense_budget.list', compact('list_expense_budget'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {   
-    	$expenseBudget = new $this->mExpenseBudget([
-            'expense__c' => '',
-            'budget__c' => '',
-            'amount__c' => ''
-        ]);
-
-		$apiConnect = Auth::user()->accessToken;
-        $expenses = $this->mExpense->orderBy('name')->get()->pluck('name','sfid');
-        $budgets = $this->mBudget->orderBy('name')->get()->pluck('name','sfid');
-        $linkRedirect = url('expense-budget');
-        $type = 'create';
-        
-        return view('expense_budget.create', compact('expenseBudget', 'expenses', 'budgets', 'linkRedirect', 'apiConnect', 'type'));
-    }
-
     public function createJunction($id) {
 
         try {
@@ -125,7 +92,6 @@ class ExpenseBudgetController extends Controller
                 $dataExpBud['Budget__c'] = $request->input('budget__c');
                 $dataExpBud['Expense__c'] = $request->input('expense__c');
                 $dataExpBud['Amount__c'] = $request->input('amount');
-                $dataExpBud['Approval_Status__c'] = 'Pending';
     
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Expense_Budget__c/', Auth::user()->accessToken, $dataExpBud);
                 
@@ -145,6 +111,11 @@ class ExpenseBudgetController extends Controller
                             }
                         }    
                     }
+
+                    if($response->statusCode == 400) {
+                        return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+                    }
+
                 } else if (isset($response->success) && $response->success == true) {
                     // set sf id
                     $sfid = $response->id;
@@ -161,7 +132,6 @@ class ExpenseBudgetController extends Controller
             $requestData['budget__c'] = $request->input('budget__c');
             $requestData['expense__c'] = $request->input('expense__c');
             $requestData['amount__c'] = $request->input('amount');
-            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['sfid'] = $sfid;
 
             $expenseBudget = $this->mExpenseBudget->create($requestData);
@@ -170,39 +140,12 @@ class ExpenseBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction('', $expenseBudget->expense__c, $expenseBudget->budget__c);
 
-            return redirect('expense-budget/'.$expenseBudget->id);
+            return redirect($request->linkRedirect);
                         
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ExpenseBudgetController');
             DB::rollback();
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        try {
-        	
-            $expenseBudget = $this->mExpenseBudget::with(['budget', 'expense'])->find($id);
-            $listApprovalProcesses = [];            
-            if($expenseBudget->status_approve != $this->hHelperConvertDateTime::PENDING) {
-                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $expenseBudget->sfid);
-                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
-                $expenseBudget->status_approve = $newStatus;
-                $expenseBudget->save();
-            }
-
-            return view('expense_budget.show', compact('expenseBudget', 'listApprovalProcesses'));
-            
-        } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- Show - ExpenseBudgetController');
-            abort(404);
         }
     }
 
@@ -217,10 +160,16 @@ class ExpenseBudgetController extends Controller
         try {
 
             $expenseBudget = $this->mExpenseBudget::findOrFail($id);
+            $expense = $this->mExpense::where('sfid', $expenseBudget->expense__c)->first();
+            $linkRedirect = url('expense/'.$expense->id);
+
+            if($expenseBudget->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+                return redirect($linkRedirect);
+            }
+            
             $expenses = $this->mExpense::orderBy('name')->get()->pluck('name', 'sfid');
             $budgets = $this->mBudget::orderBy('name')->get()->pluck('name', 'sfid');
-            $apiConnect = Auth::user()->accessToken;
-            $linkRedirect = url('expense-budget/'.$expenseBudget->id);
+            $apiConnect = Auth::user()->accessToken; 
             $type = 'edit';
             
             return view('expense_budget.edit', compact('expenseBudget', 'expenses', 'budgets', 'apiConnect', 'linkRedirect', 'type'));
@@ -253,9 +202,8 @@ class ExpenseBudgetController extends Controller
 
             // Check and update to salesforce.
             if(!empty(Auth::user()->accessToken)) {
+
                 $dataExpBud = [];
-                // $dataExpBud['Budget__c'] = $request->input('budget__c');
-                // $dataExpBud['Expense__c'] = $request->input('expense__c');
                 $dataExpBud['Amount__c'] = $request->input('amount');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Expense_Budget__c/'.$expenseBudget->sfid, Auth::user()->accessToken, $dataExpBud);
@@ -274,6 +222,11 @@ class ExpenseBudgetController extends Controller
                             }
                         }
                     }
+
+                    if($response->statusCode == 400) {
+                        return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+                    }
+
                 } else if (isset($response->success) && $response->success == true) {
                     $flagUpdate = true;
                 }
@@ -286,8 +239,6 @@ class ExpenseBudgetController extends Controller
             DB::beginTransaction();
 
             $requestData = [];
-            // $requestData['budget__c'] = $request->input('budget__c');
-            // $requestData['expense__c'] = $request->input('expense__c');
             $requestData['amount__c'] = $request->input('amount');
 
             $expenseBudget->update($requestData);
@@ -296,8 +247,7 @@ class ExpenseBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction('', $expenseBudget->expense__c, $expenseBudget->budget__c);
 
-            return redirect('expense-budget/'.$expenseBudget->id);
-            
+            return redirect($request->linkRedirect);    
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ExpenseBudgetController');
@@ -361,7 +311,7 @@ class ExpenseBudgetController extends Controller
             if($request->ajax()){
                 return response()->json(['success' => true]);
             }
-            return redirect('expense-budget');
+            return redirect('expense');
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Destroy - ExpenseBudgetController');
@@ -372,28 +322,6 @@ class ExpenseBudgetController extends Controller
             }
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
-    }
-
-    public function submitApproval(Request $request) {
-        try {
-            $id = $request->input('id');
-            $junctionEB = $this->mExpenseBudget::findOrFail($id);
-
-            $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $junctionEB->sfid);
-
-            if($response->success == true) {
-                $junctionEB->status_approve = $this->hHelperConvertDateTime::SUBMIT;
-                $junctionEB->save();
-                return redirect('expense-budget/'. $id);
-            }
-
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-
-        } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- submitApproval - ExpenseBudgetController');
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-        }
-
     }
 
     private function validation() {

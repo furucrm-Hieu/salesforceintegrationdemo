@@ -27,6 +27,11 @@ class HelperGuzzleService
         return json_decode('{"success" : false, "statusCode" : 401}');
       }
 
+      if($response->status() == 400) {
+        $data = json_decode($response->getBody()->getContents());
+        return json_decode('{"success" : false, "statusCode" : 400, "message" : "'.$data[0]->message.'"}');
+      }
+
       if($response->status() == 201) {
         $response = $response->getBody()->getContents();
         return json_decode($response);
@@ -50,6 +55,11 @@ class HelperGuzzleService
 
       if($response->status() == 401) {
         return json_decode('{"success" : false, "statusCode" : 401}');
+      }
+
+      if($response->status() == 400) {
+        $data = json_decode($response->getBody()->getContents());
+        return json_decode('{"success" : false, "statusCode" : 400, "message" : "'.$data[0]->message.'"}');
       }
 
       if($response->status() == 204) {

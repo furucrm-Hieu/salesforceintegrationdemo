@@ -75,10 +75,10 @@ class BudgetController extends Controller
             // Flag sfid check insert salesforce true or false.
             $sfid = '';
             if(Auth::user()->accessToken) {
+                
                 $dataBudget = [];
                 $dataBudget['Name'] = $request->input('name');
                 $dataBudget['Year__c'] = $request->input('year__c');
-                $dataBudget['Approval_Status__c'] = 'Pending';
 
                 // Call api insert budget.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Budget__c/', Auth::user()->accessToken, $dataBudget);
@@ -118,7 +118,6 @@ class BudgetController extends Controller
             $requestData['name'] = $request->input('name');
             $requestData['year__c'] = $request->input('year__c');
             $requestData['total_amount__c'] = 0;
-            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['sfid'] = $sfid;
 
             $budget = $this->mBudget->create($requestData);
@@ -146,20 +145,13 @@ class BudgetController extends Controller
             $budget = $this->mBudget->findOrFail($id);
             $proposal_budget = $this->mProposalBudget->where('budget__c', $budget->sfid)->with('proposal')->get();
             $expense_budget = $this->mExpenseBudget->where('budget__c', $budget->sfid)->with('expense')->get();
-            $listApprovalProcesses = [];
-            if($budget->status_approve != $this->hHelperConvertDateTime::PENDING) {
-                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $budget->sfid);
-                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
-                $budget->status_approve = $newStatus;
-                $budget->save();
-            }
 
             return view('budget.detail', [
                 'budget' => $budget,
                 'proposal' => $proposal_budget,
                 'expense' => $expense_budget,
-                'listApprovalProcesses' => $listApprovalProcesses
             ]);
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Show - BudgetController');
             abort(404);
@@ -328,27 +320,6 @@ class BudgetController extends Controller
             }
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
-    }
-
-    public function submitApproval(Request $request) {
-        try {
-            $id = $request->input('id');
-            $budget = $this->mBudget::findOrFail($id);
-            $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $budget->sfid);
-
-            if($response->success == true) {
-                $budget->status_approve = $this->hHelperConvertDateTime::SUBMIT;
-                $budget->save();
-                return redirect('budget/'. $id);
-            }
-
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-
-        } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- submitApproval - BudgetController');
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-        }
-
     }
 
     private function validation() {

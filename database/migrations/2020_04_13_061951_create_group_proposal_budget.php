@@ -40,7 +40,6 @@ class CreateGroupProposalBudget extends Migration
             $table->string('year__c', 4);
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
-            $table->string('status_approve', 50);
             $table->timestamps();
         });
 
@@ -50,7 +49,6 @@ class CreateGroupProposalBudget extends Migration
             $table->string('budget__c', 50);
             $table->double('amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
-            $table->string('status_approve', 50);
             $table->timestamps();
         });
 
@@ -73,7 +71,6 @@ class CreateGroupProposalBudget extends Migration
             $table->string('budget__c', 50);
             $table->double('amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
-            $table->string('status_approve', 50);
             $table->timestamps();
         });
 

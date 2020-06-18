@@ -105,7 +105,7 @@
         </div>
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
-            @if($expense->status_approve == HelperDateTime::APPROVED)
+            @if($expense->status_approve != HelperDateTime::SUBMIT)
             <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">Create Expense Budget</a>
             @endif
           </div>
@@ -123,11 +123,8 @@
               <td><a href="{{ url('/budget/' . $value->budget->id ) }}">{{$value->budget->name}}</a></td>
               <td>{{ number_format($value->amount__c, 2)}}</td>
               <td>
-                <a href="{{ url('/expense-budget/' . $value->id) }}" title="View"><i class="fa fa-fw fa-info-circle"></i></a>
-                @if($value->status_approve == HelperDateTime::PENDING)
+                @if($expense->status_approve != HelperDateTime::SUBMIT)
                 <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
-                <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-                </a>
                 @endif
               </td>
             </tr>

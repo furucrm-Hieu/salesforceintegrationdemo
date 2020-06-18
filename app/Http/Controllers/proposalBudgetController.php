@@ -34,38 +34,6 @@ class ProposalBudgetController extends Controller
         $this->hHelperConvertDateTime = $hHelperConvertDateTime;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $list_proposal_budget = $this->mProposalBudget->with(['budget', 'proposal'])->get();
-        return view('proposal_budget.list', compact('list_proposal_budget'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {   
-        $proposalBudget = new $this->mProposalBudget([
-            'proposal__c' => '',
-            'budget__c' => '',
-            'amount__c' => ''
-        ]);
-
-        $apiConnect = Auth::user()->accessToken;
-        $proposals = $this->mProposal->orderBy('name')->get()->pluck('name','sfid');
-        $budgets = $this->mBudget->orderBy('name')->get()->pluck('name','sfid');
-        $linkRedirect = url('proposal-budget');
-        $type = 'create';
-        
-        return view('proposal_budget.create', compact('proposalBudget', 'proposals', 'budgets', 'linkRedirect', 'apiConnect', 'type'));
-    }
 
     public function createJunction($id) {
 
@@ -90,7 +58,7 @@ class ProposalBudgetController extends Controller
             $apiConnect = Auth::user()->accessToken;
             $proposals = $this->mProposal->orderBy('name')->get()->pluck('name','sfid');
             $budgets = $this->mBudget->orderBy('name')->get()->pluck('name','sfid');
-            $linkRedirect = url($dataCheckType[0].'/'.$dataCheckType[1]);
+            $linkRedirect  = url($dataCheckType[0].'/'.$dataCheckType[1]);
             $type = 'create';
 
             return view('proposal_budget.create', compact('proposalBudget', 'proposals', 'budgets', 'linkRedirect', 'apiConnect', 'type'));
@@ -125,7 +93,6 @@ class ProposalBudgetController extends Controller
                 $dataProBud['Budget__c'] = $request->input('budget__c');
                 $dataProBud['Proposal__c'] = $request->input('proposal__c');
                 $dataProBud['Amount__c'] = $request->input('amount');
-                $dataProBud['Approval_Status__c'] = 'Pending';
                 
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Proposal_Budget__c/', Auth::user()->accessToken, $dataProBud);
                 
@@ -145,6 +112,11 @@ class ProposalBudgetController extends Controller
                             }
                         }    
                     }
+
+                    if($response->statusCode == 400) {
+                        return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+                    }
+                    
                 } else if (isset($response->success) && $response->success == true) {
                     // set sf id
                     $sfid = $response->id;
@@ -161,7 +133,6 @@ class ProposalBudgetController extends Controller
             $requestData['budget__c'] = $request->input('budget__c');
             $requestData['proposal__c'] = $request->input('proposal__c');
             $requestData['amount__c'] = $request->input('amount');
-            $requestData['status_approve'] = $this->hHelperConvertDateTime::PENDING;
             $requestData['sfid'] = $sfid;
 
             $proposalBudget = $this->mProposalBudget->create($requestData);
@@ -170,7 +141,7 @@ class ProposalBudgetController extends Controller
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '' , $proposalBudget->budget__c);
 
-            return redirect('proposal-budget/'.$proposalBudget->id);
+            return redirect($request->linkRedirect);
                         
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Store - ProposalBudgetController');
@@ -178,33 +149,7 @@ class ProposalBudgetController extends Controller
             return redirect()->back()->withErrors(['message' => __('messages.System_Error')])->withInput();
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        try {
-
-            $proposalBudget = $this->mProposalBudget::with(['budget', 'proposal'])->find($id);
-            $listApprovalProcesses = [];
-            if($proposalBudget->status_approve != $this->hHelperConvertDateTime::PENDING) {
-                $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $proposalBudget->sfid);
-                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
-                $proposalBudget->status_approve = $newStatus;
-                $proposalBudget->save();
-            }
-
-            return view('proposal_budget.show', compact('proposalBudget', 'listApprovalProcesses'));
-
-        } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- Show - ProposalBudgetController');
-            abort(404);
-        }
-    }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -217,12 +162,18 @@ class ProposalBudgetController extends Controller
         try {
 
             $proposalBudget = $this->mProposalBudget::findOrFail($id);
+            $proposal = $this->mProposal::where('sfid', $proposalBudget->proposal__c)->first();
+            $linkRedirect = url('proposal/'.$proposal->id);
+
+            if($proposalBudget->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+                return redirect($linkRedirect);
+            }
+
             $proposals = $this->mProposal::orderBy('name')->get()->pluck('name', 'sfid');
             $budgets = $this->mBudget::orderBy('name')->get()->pluck('name', 'sfid');
-            $apiConnect = Auth::user()->accessToken;
-            $linkRedirect = url('proposal-budget/'.$proposalBudget->id);
+            $apiConnect = Auth::user()->accessToken;   
             $type = 'edit';
-            
+
             return view('proposal_budget.edit', compact('proposalBudget', 'proposals', 'budgets', 'apiConnect', 'linkRedirect', 'type'));
 
         } catch (\Exception $ex) {
@@ -254,9 +205,8 @@ class ProposalBudgetController extends Controller
 
             // Check and update to salesforce.
             if(!empty(Auth::user()->accessToken)) {
+
                 $dataProBud = [];
-                // $dataProBud['Proposal__c'] = $request->input('proposal__c');
-                // $dataProBud['Budget__c'] = $request->input('budget__c');
                 $dataProBud['Amount__c'] = $request->input('amount');
 
                 $response = $this->hHelperGuzzleService::guzzleUpdate(config('authenticate.api_uri').'/Proposal_Budget__c/'.$proposalBudget->sfid, Auth::user()->accessToken, $dataProBud);
@@ -275,6 +225,11 @@ class ProposalBudgetController extends Controller
                             }
                         }
                     }
+
+                    if($response->statusCode == 400) {
+                        return redirect()->back()->withErrors(['message' => $response->message])->withInput();
+                    }
+
                 } else if (isset($response->success) && $response->success == true) {
                     $flagUpdate = true;
                 }
@@ -287,8 +242,6 @@ class ProposalBudgetController extends Controller
             DB::beginTransaction();
 
             $requestData = [];
-            // $requestData['proposal__c'] = $request->input('proposal__c');
-            // $requestData['budget__c'] = $request->input('budget__c');
             $requestData['amount__c'] = $request->input('amount');
 
             $proposalBudget->update($requestData);
@@ -297,7 +250,7 @@ class ProposalBudgetController extends Controller
             
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '', $proposalBudget->budget__c);
 
-            return redirect('proposal-budget/'.$proposalBudget->id);
+            return redirect($request->linkRedirect);
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Update - ProposalBudgetController');
@@ -359,35 +312,13 @@ class ProposalBudgetController extends Controller
             if($request->ajax()){
                 return response()->json(['success' => true]);
             }
-            return redirect('proposal-budget');
+            return redirect('proposal');
 
         }catch(\Exception $ex) {
             Log::info($ex->getMessage(). ' Destroy - ProposalBudgetController');
             DB::rollback();
             return response()->json(['success' => false]);
         }
-    }
-
-    public function submitApproval(Request $request) {
-        try {
-            $id = $request->input('id');
-            $junctionPB = $this->mProposalBudget::findOrFail($id);
-
-            $response = $this->hHelperGuzzleService->submitApproval(Auth::user()->accessToken, $junctionPB->sfid);
-
-            if($response->success == true) {
-                $junctionPB->status_approve = $this->hHelperConvertDateTime::SUBMIT;
-                $junctionPB->save();
-                return redirect('proposal-budget/'. $id);
-            }
-
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-
-        } catch (\Exception $ex) {
-            Log::info($ex->getMessage().'- submitApproval - ProposalBudgetController');
-            return redirect()->back()->withErrors(['message' => __('messages.System_Error')]);
-        }
-
     }
 
     private function validation() {
