@@ -61,7 +61,6 @@ class ApiController extends Controller
                     'roleName' => $roleName
                 ]);
                 DB::commit();
-                dd($this->apiConnect::findOrFail(Auth::user()->id));
             }
         }
         catch(\Exception $ex) {
