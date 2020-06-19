@@ -21,12 +21,14 @@
             <div class="form-group">
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
-                @if($proposal->status_approve != HelperDateTime::SUBMIT)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
-                @endif
                 @if($proposal->status_approve == HelperDateTime::PENDING)
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
                 <a class="btn btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
+                @elseif($proposal->status_approve == HelperDateTime::APPROVED)
+                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                  @endif
                 @endif
               </div>
               <div class="col-sm-5" ></div>
@@ -107,8 +109,12 @@
         </div>
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
-            @if($proposal->status_approve != HelperDateTime::SUBMIT)
+            @if($proposal->status_approve == HelperDateTime::PENDING)
             <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/proposal-'.$proposal->id)}}">@lang("messages.Create_Proposal_Budget")</a>
+            @elseif($proposal->status_approve == HelperDateTime::APPROVED)
+              @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+              <a class="btn btn-primary bt-center-dt" href="{{url('/junctionPB/proposal-'.$proposal->id)}}">@lang("messages.Create_Proposal_Budget")</a>
+              @endif
             @endif
           </div>
           <table class="table table-bordered table-striped" id="proposalBudget">
@@ -125,11 +131,17 @@
               <td><a href="{{ url('/budget/' . $value->budget->id ) }}">{{$value->budget->name}}</a></td>
               <td>{{ number_format($value->amount__c, 2)}}</td>
               <td>
-                @if($proposal->status_approve != HelperDateTime::SUBMIT)
+                @if($proposal->status_approve == HelperDateTime::PENDING)
                 <a href="{{ url('/proposal-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                </a>
+                @elseif($proposal->status_approve == HelperDateTime::APPROVED)
+                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+                  <a href="{{ url('/proposal-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                  <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                  </a>
+                  @endif
                 @endif
-                <!-- <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'proposal-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
-                </a> -->
               </td>
             </tr>
             @endforeach

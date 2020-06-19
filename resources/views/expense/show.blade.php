@@ -21,12 +21,14 @@
             <div class="form-group">
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
-                @if($expense->status_approve != HelperDateTime::SUBMIT)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
-                @endif
                 @if($expense->status_approve == HelperDateTime::PENDING)
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
                 <a class="btn btn-primary" href="{{url('/expense/'.$expense->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
+                @elseif($expense->status_approve == HelperDateTime::APPROVED)
+                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                  @endif
                 @endif
               </div>
               <div class="col-sm-5" ></div>
@@ -107,8 +109,12 @@
         </div>
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
-            @if($expense->status_approve != HelperDateTime::SUBMIT)
+            @if($expense->status_approve == HelperDateTime::PENDING)
             <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">Create Expense Budget</a>
+            @elseif($expense->status_approve == HelperDateTime::APPROVED)
+              @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+              <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">Create Expense Budget</a>
+              @endif
             @endif
           </div>
           <table class="table table-bordered table-striped" id="expenseBudget">
@@ -125,8 +131,12 @@
               <td><a href="{{ url('/budget/' . $value->budget->id ) }}">{{$value->budget->name}}</a></td>
               <td>{{ number_format($value->amount__c, 2)}}</td>
               <td>
-                @if($expense->status_approve != HelperDateTime::SUBMIT)
+                @if($expense->status_approve == HelperDateTime::PENDING)
                 <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                @elseif($expense->status_approve == HelperDateTime::APPROVED)
+                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
+                  <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                  @endif
                 @endif
               </td>
             </tr>

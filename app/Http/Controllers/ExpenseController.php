@@ -184,6 +184,11 @@ class ExpenseController extends Controller
 
             $apiConnect = Auth::user()->accessToken;
             $expense = $this->mExpense::findOrFail($id);
+
+            if($expense->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+                return redirect()->back();
+            }
+            
             return view('expense.edit', compact('expense', 'apiConnect'));
 
         } catch (\Exception $ex) {

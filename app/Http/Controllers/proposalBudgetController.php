@@ -165,7 +165,7 @@ class ProposalBudgetController extends Controller
             $proposal = $this->mProposal::where('sfid', $proposalBudget->proposal__c)->first();
             $linkRedirect = url('proposal/'.$proposal->id);
 
-            if($proposalBudget->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+            if($proposal->status_approve == $this->hHelperConvertDateTime::SUBMIT){
                 return redirect($linkRedirect);
             }
 
@@ -245,10 +245,10 @@ class ProposalBudgetController extends Controller
             $requestData['amount__c'] = $request->input('amount');
             $proposalBudget->update($requestData);
 
-            $proposalSfid = $request->input('proposal__c');
-            $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
-            $proposal->status_approve = $this->hHelperConvertDateTime::PENDING;
-            $proposal->save();
+            // $proposalSfid = $request->input('proposal__c');
+            // $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
+            // $proposal->status_approve = $this->hHelperConvertDateTime::PENDING;
+            // $proposal->save();
 
             DB::commit();
             
@@ -269,7 +269,7 @@ class ProposalBudgetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try{
 
@@ -316,7 +316,6 @@ class ProposalBudgetController extends Controller
             if($request->ajax()){
                 return response()->json(['success' => true]);
             }
-            return redirect('proposal');
 
         }catch(\Exception $ex) {
             Log::info($ex->getMessage(). ' Destroy - ProposalBudgetController');

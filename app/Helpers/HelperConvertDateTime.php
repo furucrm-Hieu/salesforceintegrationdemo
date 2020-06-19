@@ -8,6 +8,7 @@ class HelperConvertDateTime
   const PENDING = 'Pending';
   const SUBMIT = 'Submit';
   const APPROVED = 'Approved';
+  const FINANCE = 'Finance';
   
   public static function convertDateTimeJpToUtc(string $string)
   {

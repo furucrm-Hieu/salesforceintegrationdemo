@@ -183,6 +183,10 @@ class ProposalController extends Controller
             $apiConnect = Auth::user()->accessToken;
             $proposal = $this->mProposal::findOrFail($id);
 
+            if($proposal->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+                return redirect()->back();
+            }
+
             return view('proposal.edit', compact('proposal', 'apiConnect'));
 
         } catch (\Exception $ex) {

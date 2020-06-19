@@ -163,7 +163,7 @@ class ExpenseBudgetController extends Controller
             $expense = $this->mExpense::where('sfid', $expenseBudget->expense__c)->first();
             $linkRedirect = url('expense/'.$expense->id);
 
-            if($expenseBudget->status_approve == $this->hHelperConvertDateTime::SUBMIT){
+            if($expense->status_approve == $this->hHelperConvertDateTime::SUBMIT){
                 return redirect($linkRedirect);
             }
             
@@ -242,10 +242,10 @@ class ExpenseBudgetController extends Controller
             $requestData['amount__c'] = $request->input('amount');
             $expenseBudget->update($requestData);
 
-            $expenseSfid = $request->input('expense__c');
-            $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
-            $expense->status_approve = $this->hHelperConvertDateTime::PENDING;
-            $expense->save();
+            // $expenseSfid = $request->input('expense__c');
+            // $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
+            // $expense->status_approve = $this->hHelperConvertDateTime::PENDING;
+            // $expense->save();
 
             DB::commit();
 
@@ -315,7 +315,6 @@ class ExpenseBudgetController extends Controller
             if($request->ajax()){
                 return response()->json(['success' => true]);
             }
-            return redirect('expense');
 
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- Destroy - ExpenseBudgetController');
