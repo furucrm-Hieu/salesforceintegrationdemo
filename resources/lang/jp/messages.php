@@ -53,12 +53,13 @@
         'Approval_Process_Flow' => "承認プロセス",
         'Step_Name' => 'ステップ名',
         'Date' => '日付',
-        'Status' => 'ステータス',
+        'Status_TableList' => 'ステータス',
         'Assigned_To' => '担当者',
         'Expense_Budget' => '経費と予算の結合テーブル',
         'Edit_Expense' => '経費編集',
         'Detail_Expense' => '経費詳細',
-        'Submit' => '申請',
+        'Submit_Payment' => '決済申請',
+        'Submit_Request' => '稟議申請',
         'Create_Expense_Budget_Button' => '経費と予算の結合作成',
         'Edit_Expense_Budget' => '経費と予算の結合を編集'
     ];

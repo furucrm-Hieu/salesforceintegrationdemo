@@ -8,7 +8,7 @@
       <tr>
         <th>@lang('messages.Step_Name')</th>
         <th style="width: 300px">@lang('messages.Date')</th>
-        <th style="width: 300px">@lang('messages.Status')</th>
+        <th style="width: 300px">@lang('messages.Status_TableList')</th>
         <th>@lang('messages.Assigned_To')</th>
       </tr>
       </thead>

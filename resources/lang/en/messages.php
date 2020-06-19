@@ -53,12 +53,13 @@
         'Approval_Process_Flow' => "Approval Process Flow",
         'Step_Name' => 'Step Name',
         'Date' => 'Date',
-        'Status' => 'Status',
+        'Status_TableList' => 'Status',
         'Assigned_To' => 'Assigned To',
         'Expense_Budget' => 'Expense Budget',
         'Edit_Expense' => 'Edit Expense',
         'Detail_Expense' => 'Detail Expense',
-        'Submit' => 'Submit',
+        'Submit_Payment' => 'Submit Payment',
+        'Submit_Request' => 'Submit Request',
         'Create_Expense_Budget_Button' => 'Create Expense Budget',
         'Edit_Expense_Budget' => 'Edit Expense Budget'
     ];

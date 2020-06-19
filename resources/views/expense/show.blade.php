@@ -27,7 +27,9 @@
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @elseif($expense->status_approve == HelperDateTime::APPROVED)
                   @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
-                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)"> @lang('messages.Submit')</button>
+                    <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">
+                      {{ ($expense->type_submit == true) ? __('Submit_Payment') : __('Submit_Request') }}
+                    </button>
                   @endif
                 @endif
               </div>

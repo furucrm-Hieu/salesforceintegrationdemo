@@ -160,8 +160,10 @@ class ProposalController extends Controller
                         $newStatus = $this->hHelperConvertDateTime::APPROVED;
                     }else if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::REJECTED) {
                         $newStatus = $this->hHelperConvertDateTime::PENDING;
+                        $proposal->type_submit = false;
                     }else {
                         $newStatus = $this->hHelperConvertDateTime::SUBMIT;
+                        $proposal->type_submit = false;
                     }
                     $proposal->status_approve = $newStatus;
                     $proposal->save();

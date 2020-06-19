@@ -31,6 +31,7 @@ class CreateGroupProposalBudget extends Migration
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
             $table->string('status_approve', 50);
+            $table->boolean('type_submit')->default(0);
             $table->timestamps();
         });
 
@@ -62,6 +63,7 @@ class CreateGroupProposalBudget extends Migration
             $table->double('total_amount__c', 16, 2);
             $table->string('sfid', 50)->nullable();
             $table->string('status_approve', 50);
+            $table->boolean('type_submit')->default(0);
             $table->timestamps();
         });
 

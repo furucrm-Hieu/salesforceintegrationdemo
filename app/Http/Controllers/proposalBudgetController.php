@@ -137,6 +137,13 @@ class ProposalBudgetController extends Controller
 
             $proposalBudget = $this->mProposalBudget->create($requestData);
 
+            $proposalSfid = $request->input('proposal__c');
+            $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
+            if($proposal->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $proposal->type_submit = true;
+                $proposal->save();
+            }
+
             DB::commit();
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '' , $proposalBudget->budget__c);
@@ -245,10 +252,12 @@ class ProposalBudgetController extends Controller
             $requestData['amount__c'] = $request->input('amount');
             $proposalBudget->update($requestData);
 
-            // $proposalSfid = $request->input('proposal__c');
-            // $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
-            // $proposal->status_approve = $this->hHelperConvertDateTime::PENDING;
-            // $proposal->save();
+            $proposalSfid = $request->input('proposal__c');
+            $proposal = $this->mProposal::where('sfid', $proposalSfid)->first();
+            if($proposal->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $proposal->type_submit = true;
+                $proposal->save();
+            }
 
             DB::commit();
             
@@ -309,6 +318,12 @@ class ProposalBudgetController extends Controller
 
             DB::beginTransaction();
             $proposalBudget->delete();
+
+            $proposal = $this->mProposal::where('sfid', $proposalBudget->proposal__c)->first();
+            if($proposal->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $proposal->type_submit = true;
+                $proposal->save();
+            }
             DB::commit();
             
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction($proposalBudget->proposal__c, '', $proposalBudget->budget__c);

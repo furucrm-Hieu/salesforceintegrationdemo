@@ -162,8 +162,10 @@ class ExpenseController extends Controller
                         $newStatus = $this->hHelperConvertDateTime::APPROVED;
                     }else if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::REJECTED) {
                         $newStatus = $this->hHelperConvertDateTime::PENDING;
+                        $expense->type_submit = false;
                     }else {
                         $newStatus = $this->hHelperConvertDateTime::SUBMIT;
+                        $expense->type_submit = false;
                     }
                     $expense->status_approve = $newStatus;
                     $expense->save();

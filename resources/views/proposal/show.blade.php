@@ -22,12 +22,14 @@
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
                 @if($proposal->status_approve == HelperDateTime::PENDING)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit Payment</button>
                 <a class="btn btn-primary" href="{{url('/proposal/'.$proposal->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @elseif($proposal->status_approve == HelperDateTime::APPROVED)
-                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
-                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                  @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)                   
+                    <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">
+                      {{ ($proposal->type_submit == true) ? __('Submit_Payment') : __('Submit_Request') }}
+                    </button>
                   @endif
                 @endif
               </div>

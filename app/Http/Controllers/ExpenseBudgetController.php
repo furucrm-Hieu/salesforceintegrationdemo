@@ -136,6 +136,13 @@ class ExpenseBudgetController extends Controller
 
             $expenseBudget = $this->mExpenseBudget->create($requestData);
 
+            $expenseSfid = $request->input('expense__c');
+            $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
+            if($expense->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $expense->type_submit = true;
+                $expense->save();
+            }
+
             DB::commit();
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction('', $expenseBudget->expense__c, $expenseBudget->budget__c);
@@ -242,10 +249,12 @@ class ExpenseBudgetController extends Controller
             $requestData['amount__c'] = $request->input('amount');
             $expenseBudget->update($requestData);
 
-            // $expenseSfid = $request->input('expense__c');
-            // $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
-            // $expense->status_approve = $this->hHelperConvertDateTime::PENDING;
-            // $expense->save();
+            $expenseSfid = $request->input('expense__c');
+            $expense = $this->mExpense::where('sfid', $expenseSfid)->first();
+            if($expense->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $expense->type_submit = true;
+                $expense->save();
+            }
 
             DB::commit();
 
@@ -308,6 +317,12 @@ class ExpenseBudgetController extends Controller
 
             DB::beginTransaction();
             $junctionEB->delete();
+
+            $expense = $this->mExpense::where('sfid', $junctionEB->expense__c)->first();
+            if($expense->status_approve == $this->hHelperConvertDateTime::APPROVED){
+                $expense->type_submit = true;
+                $expense->save();
+            }
             DB::commit();
 
             $this->hHelperHandleTotalAmount->caseCreateDeleteJunction('', $junctionEB->expense__c, $junctionEB->budget__c);
