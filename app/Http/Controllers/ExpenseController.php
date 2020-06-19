@@ -158,7 +158,13 @@ class ExpenseController extends Controller
             if($expense->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $expense->sfid);
                 if($listApprovalProcesses) {
-                    $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                    if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED){
+                        $newStatus = $this->hHelperConvertDateTime::APPROVED;
+                    }else if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::REJECTED) {
+                        $newStatus = $this->hHelperConvertDateTime::PENDING;
+                    }else {
+                        $newStatus = $this->hHelperConvertDateTime::SUBMIT;
+                    }
                     $expense->status_approve = $newStatus;
                     $expense->save();
                 }

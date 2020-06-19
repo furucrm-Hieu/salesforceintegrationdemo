@@ -156,7 +156,13 @@ class ProposalController extends Controller
             if($proposal->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $proposal->sfid);
                 if($listApprovalProcesses) {
-                    $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                    if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED){
+                        $newStatus = $this->hHelperConvertDateTime::APPROVED;
+                    }else if($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::REJECTED) {
+                        $newStatus = $this->hHelperConvertDateTime::PENDING;
+                    }else {
+                        $newStatus = $this->hHelperConvertDateTime::SUBMIT;
+                    }
                     $proposal->status_approve = $newStatus;
                     $proposal->save();
                 }
