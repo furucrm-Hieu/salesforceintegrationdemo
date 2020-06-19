@@ -51,7 +51,7 @@ class ExpenseController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {   
+    {
         $apiConnect = Auth::user()->accessToken;
         return view('expense.create', compact('apiConnect'));
     }
@@ -88,7 +88,7 @@ class ExpenseController extends Controller
 
                 // Call api insert proposal.
                 $response = $this->hHelperGuzzleService::guzzlePost(config('authenticate.api_uri').'/Expense__c/', Auth::user()->accessToken, $dataExpense);
-                
+
                 // if insert sf false.
                 if(isset($response->success) && $response->success == false) {
                     // if status code 401, call again insert
@@ -104,7 +104,7 @@ class ExpenseController extends Controller
                                 // set sf id
                                 $sfid = $response1->id;
                             }
-                        }    
+                        }
                     }
                 // if insert sf true.
                 } else if (isset($response->success) && $response->success == true) {
@@ -157,9 +157,11 @@ class ExpenseController extends Controller
             $listApprovalProcesses = [];
             if($expense->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $expense->sfid);
-                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
-                $expense->status_approve = $newStatus;
-                $expense->save();
+                if($listApprovalProcesses) {
+                    $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                    $expense->status_approve = $newStatus;
+                    $expense->save();
+                }
             }
 
             return view('expense.show', compact('expense', 'listBudget', 'listApprovalProcesses'));
@@ -288,11 +290,11 @@ class ExpenseController extends Controller
             if(!empty(Auth::user()->accessToken)) {
 
                 $response = $this->hHelperGuzzleService::guzzleDelete(config('authenticate.api_uri').'/Expense__c/'.$expense->sfid, Auth::user()->accessToken);
-                
+
                 if(isset($response->success) && $response->success == false) {
                     if($response->statusCode == 401) {
                         $resFreshToken = $this->hHelperGuzzleService::refreshToken(Auth::user()->refreshToken);
-    
+
                         if($resFreshToken->success == true){
                             $access_token = $resFreshToken->access_token;
 
@@ -306,7 +308,7 @@ class ExpenseController extends Controller
                 } else if (isset($response->success) && $response->success == true) {
                     $flagDelete = true;
                 }
-                
+
             }
 
             if(!$flagDelete) {
@@ -351,7 +353,7 @@ class ExpenseController extends Controller
             if($response->success == false && $response->statusCode == 400) {
                 return redirect()->back()->withErrors(['message' => $response->message])->withInput();
             }
-            
+
             if($response->success == true) {
                 $expense->status_approve = $this->hHelperConvertDateTime::SUBMIT;
                 $expense->save();

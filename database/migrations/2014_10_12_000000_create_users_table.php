@@ -21,7 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('accessToken')->nullable();
             $table->string('refreshToken')->nullable();
-            $table->boolean('expired')->default(false);
+            $table->string('userId', 30)->nullable();
+            $table->string('roleName', 30)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

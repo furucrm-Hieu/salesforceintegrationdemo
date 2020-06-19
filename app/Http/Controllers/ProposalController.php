@@ -155,9 +155,11 @@ class ProposalController extends Controller
             $listApprovalProcesses = [];
             if($proposal->status_approve != $this->hHelperConvertDateTime::PENDING) {
                 $listApprovalProcesses = $this->hHelperGuzzleService->guzzleGetApproval(Auth::user()->accessToken, $proposal->sfid);
-                $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
-                $proposal->status_approve = $newStatus;
-                $proposal->save();
+                if($listApprovalProcesses) {
+                    $newStatus = ($listApprovalProcesses[0]['Status'] == $this->hHelperConvertDateTime::APPROVED) ? $this->hHelperConvertDateTime::APPROVED : $this->hHelperConvertDateTime::SUBMIT;
+                    $proposal->status_approve = $newStatus;
+                    $proposal->save();
+                }
             }
 
             return view('proposal.show', compact('proposal', 'listBudget', 'listApprovalProcesses'));

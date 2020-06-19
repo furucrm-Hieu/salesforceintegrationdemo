@@ -164,7 +164,7 @@ class HelperGuzzleService
         $data = json_decode($response->getBody()->getContents());
         return json_decode('{"success" : false, "statusCode" : 400, "message" : "'.$data[0]->message.'"}');
       }
-      
+
       if($response->status() == 200) {
         return json_decode('{"success" : true}');
       }
@@ -182,7 +182,7 @@ class HelperGuzzleService
     if(count($data->records) > 0)
     {
       foreach ($data->records as $value) {
-      
+
         $temp1 = $value->StepsAndWorkitems->records;
 
         foreach ($temp1 as $key => $value1) {
@@ -195,12 +195,30 @@ class HelperGuzzleService
           ];
 
           array_push($arrValue, $arrData);
-          
+
         }
       }
     }
 
     return $arrValue;
+  }
+
+  public function getRoleUser($token, $code){
+
+    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Username,+UserRole.Name+FROM+User+WHERE+Id+=+'".$code."'";
+
+    $response = Http::withHeaders([
+      'Authorization' => 'Bearer '.$token,
+      'Content-Type' => 'application/json',
+    ])->get($url);
+
+    if($response->status() == 200) {
+      $data = json_decode($response->getBody()->getContents());
+      $roleName = $data->records[0]->UserRole;
+      return empty($roleName) ? 'User' : $roleName->Name;
+    }
+
+    return 'User';
   }
 
   public function convertDateTimeApproval($datetime) {
@@ -210,6 +228,6 @@ class HelperGuzzleService
     $dateTimeUTC = $dateTimeJP->addHours(9);
     return $dateTimeUTC->toDateTimeString();
   }
-  
+
 }
 
