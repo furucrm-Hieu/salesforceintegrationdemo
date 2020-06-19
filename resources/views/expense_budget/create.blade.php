@@ -3,7 +3,7 @@
 @section('content')
 <section class="content-header">
   <h1>
-    Create Expense Budget
+    @lang('messages.Create_Expense_Budget_Title')
   </h1>
 </section>
 
@@ -11,7 +11,7 @@
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
 
         <form action="{{url('expense-budget')}}" method="POST" id="createform" class="form-horizontal">
@@ -36,14 +36,14 @@
 
     })
 
-    function checkConnectSf() {     
+    function checkConnectSf() {
       if(!$('#createform')[0].checkValidity()) {
         $("#createform")[0].reportValidity();
       }
       else {
         alert(tokenError);
-      }     
+      }
     }
   </script>
-  
+
 @endsection

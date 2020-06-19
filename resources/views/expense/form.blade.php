@@ -1,6 +1,6 @@
 <div class="box-body">
   <div class="form-group">
-    <label class="col-sm-2 control-label">Expense Name <span class="red"> *</span></label>
+    <label class="col-sm-2 control-label">@lang('messages.Expense_Name')<span class="red"> *</span></label>
     <div class="col-sm-5">
       <input type="text" class="form-control" name="name" value="{{old('name', isset($expense->name) ? $expense->name : '')}}" required>
       @if ($errors->has('name'))

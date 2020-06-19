@@ -3,7 +3,7 @@
 @section('content')
 <section class="content-header">
   <h1>
-    Detail Expense
+    @lang('messages.Detail_Expense')
   </h1>
 </section>
 
@@ -11,23 +11,23 @@
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
 
         <form method="POST" class="form-horizontal">
-          
+
           <div class="box-body">
 
             <div class="form-group">
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
                 @if($expense->status_approve == HelperDateTime::PENDING)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)"> @lang('messages.Submit')</button>
                 <a class="btn btn-primary" href="{{url('/expense/'.$expense->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @elseif($expense->status_approve == HelperDateTime::APPROVED)
                   @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
-                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">Submit</button>
+                  <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)"> @lang('messages.Submit')</button>
                   @endif
                 @endif
               </div>
@@ -35,7 +35,7 @@
             </div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Expense Name : </label>
+              <label class="col-sm-2 control-label"> @lang('messages.Expense_Name') : </label>
               <div class="col-sm-5" style="padding-top: 7px">
                 {{$expense->name}}
               </div>
@@ -104,16 +104,16 @@
       <!-- start box junction -->
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title"><b>Expense Budget</b></h3>
+          <h3 class="box-title"><b> @lang('messages.Expense_Budget')</b></h3>
 
         </div>
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
             @if($expense->status_approve == HelperDateTime::PENDING)
-            <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">Create Expense Budget</a>
+            <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">@lang('messages.Create_Expense_Budget_Button')</a>
             @elseif($expense->status_approve == HelperDateTime::APPROVED)
               @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
-              <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">Create Expense Budget</a>
+              <a class="btn btn-primary bt-center-dt" href="{{url('/junctionEB/expense-'.$expense->id)}}">@lang('messages.Create_Expense_Budget_Button')</a>
               @endif
             @endif
           </div>
@@ -141,7 +141,7 @@
               </td>
             </tr>
             @endforeach
-            </tbody>           
+            </tbody>
           </table>
         </div>
       </div>

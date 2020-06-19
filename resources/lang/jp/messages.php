@@ -45,6 +45,21 @@
         'Status' => 'Salesforce接続ステータス',
         'Loading' => '読み込み中',
         'System_Error' => 'システムにてエラーが発生しました。管理者まで問い合わせてください。',
-        'Token_Error' => 'アプリケーションがSalesforceに接続されていないか、アクセストークンの有効期限が切れていました'
+        'Token_Error' => 'アプリケーションがSalesforceに接続されていないか、アクセストークンの有効期限が切れていました',
+        'Expense' => '経費',
+        'New_Expense' => '経費作成',
+        'Expense_Name' => '経費名',
+        'Create_Expense_Budget_Title' => '経費と予算の結合のテーブル作成',
+        'Approval_Process_Flow' => "承認プロセス",
+        'Step_Name' => 'ステップ名',
+        'Date' => '日付',
+        'Status' => 'ステータス',
+        'Assigned_To' => '担当者',
+        'Expense_Budget' => '経費と予算の結合テーブル',
+        'Edit_Expense' => '経費編集',
+        'Detail_Expense' => '経費詳細',
+        'Submit' => '申請',
+        'Create_Expense_Budget_Button' => '経費と予算の結合作成',
+        'Edit_Expense_Budget' => '経費と予算の結合を編集'
     ];
 ?>

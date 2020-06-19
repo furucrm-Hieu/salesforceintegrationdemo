@@ -85,7 +85,7 @@
 <!-- start box junction -->
 <div class="box">
     <div class="box-header">
-      <h3 class="box-title"><b>Expense Budget</b></h3>
+      <h3 class="box-title"><b>@lang('messages.Expense_Budget')</b></h3>
     </div>
     <div class="box-body">
       <div class="button-footer" style="height: 0px">
@@ -104,7 +104,7 @@
           <td>{{ number_format($value->amount__c, 2)}}</td>
         </tr>
         @endforeach
-        </tbody>           
+        </tbody>
       </table>
     </div>
 </div>

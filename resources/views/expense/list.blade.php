@@ -3,24 +3,24 @@
 @section('content')
 <section class="content-header">
   <h1>
-    Expense
+    @lang('messages.Expense')
   </h1>
 </section>
 <!-- Main content -->
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
         <!-- /.box-header -->
         <div class="box-body">
           <div class="button-footer" style="height: 0px">
-            <a class="btn btn-primary bt-center-dt" href="{{route('expense.create')}}">New Expense</a>
+            <a class="btn btn-primary bt-center-dt" href="{{route('expense.create')}}">@lang('messages.New_Expense')</a>
           </div>
           <table id="expense" class="table table-bordered table-striped">
             <thead>
             <tr>
-              <th>Expense Name</th>
+              <th>@lang('messages.Expense_Name')</th>
               <th>@lang("messages.ProposalAt")</th>
               <th>@lang("messages.ApprovedAt")</th>
               <th>@lang("messages.Year")</th>

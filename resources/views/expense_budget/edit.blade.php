@@ -3,14 +3,14 @@
 @section('content')
 <section class="content-header">
   <h1>
-    Edit Expense Budget
+    @lang('messages.Edit_Expense_Budget')
   </h1>
 </section>
 
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
 
         <form action="{{url('expense-budget/'.$expenseBudget->id)}}" id="editform" method="POST" class="form-horizontal">
@@ -36,14 +36,14 @@
 
     })
 
-    function checkConnectSf() {     
+    function checkConnectSf() {
       if(!$('#editform')[0].checkValidity()) {
         $("#editform")[0].reportValidity();
       }
       else {
         alert(tokenError);
-      }     
+      }
     }
   </script>
-  
+
 @endsection

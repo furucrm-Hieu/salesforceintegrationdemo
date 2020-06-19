@@ -45,6 +45,21 @@
         'Connected' => 'Connected',
         'Loading' => 'Loading',
         'System_Error' => 'System error, Please contact admin',
-        'Token_Error' => 'Your application is not connected to salesforce or access token expired'
+        'Token_Error' => 'Your application is not connected to salesforce or access token expired',
+        'Expense' => 'Expense',
+        'New_Expense' => 'New Expense',
+        'Expense_Name' => 'Expense Name',
+        'Create_Expense_Budget_Title' => 'Create Expense Budget',
+        'Approval_Process_Flow' => "Approval Process Flow",
+        'Step_Name' => 'Step Name',
+        'Date' => 'Date',
+        'Status' => 'Status',
+        'Assigned_To' => 'Assigned To',
+        'Expense_Budget' => 'Expense Budget',
+        'Edit_Expense' => 'Edit Expense',
+        'Detail_Expense' => 'Detail Expense',
+        'Submit' => 'Submit',
+        'Create_Expense_Budget_Button' => 'Create Expense Budget',
+        'Edit_Expense_Budget' => 'Edit Expense Budget'
     ];
 ?>

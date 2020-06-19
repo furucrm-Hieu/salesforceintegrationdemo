@@ -1,9 +1,9 @@
 <div class="box-body">
 
   <input type="hidden" name="linkRedirect" value="{{isset($linkRedirect) ? $linkRedirect : ''}}">
-  
+
   <div class="form-group">
-    <label class="col-sm-2 control-label">Expense<span class="red"> *</span> </label>
+    <label class="col-sm-2 control-label">@lang('messages.Expense')<span class="red"> *</span> </label>
     <select class="form-control custom-select" disabled>
       <option value=""> -- @lang("messages.None") --</option>
       @foreach($expenses as $key => $value)

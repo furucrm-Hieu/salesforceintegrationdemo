@@ -6,7 +6,7 @@
 @section('content')
 <section class="content-header">
   <h1>
-    New Expense
+    @lang('messages.New_Expense')
   </h1>
 </section>
 
@@ -14,7 +14,7 @@
 <section class="content">
   <div class="row">
     <div class="col-xs-12">
-      
+
       <div class="box">
 
         <form action="{{url('expense')}}" method="POST" id="createform" class="form-horizontal">
@@ -38,31 +38,31 @@
         $('#overlay').fadeIn();
         $('#submit').attr('disabled', true);
       });
- 
+
       $('#approved_at').daterangepicker({
         singleDatePicker: true,
-        timePicker: true, 
-        timePickerIncrement: 30, 
+        timePicker: true,
+        timePickerIncrement: 30,
         locale: { format: 'YYYY-MM-DD HH:mm:ss' }
       });
 
       $('#proposed_at').daterangepicker({
         singleDatePicker: true,
-        timePicker: true, 
-        timePickerIncrement: 30, 
+        timePicker: true,
+        timePickerIncrement: 30,
         locale: { format: 'YYYY-MM-DD HH:mm:ss' }
       });
 
     })
 
-    function checkConnectSf() {     
+    function checkConnectSf() {
       if(!$('#createform')[0].checkValidity()) {
         $("#createform")[0].reportValidity();
       }
       else {
         alert(tokenError);
-      }     
+      }
     }
   </script>
-  
+
 @endsection
