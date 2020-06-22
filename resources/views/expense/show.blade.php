@@ -22,13 +22,13 @@
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
                 @if($expense->status_approve == HelperDateTime::PENDING)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)"> @lang('messages.Submit')</button>
+                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">@lang("messages.Submit_Payment")</button>
                 <a class="btn btn-primary" href="{{url('/expense/'.$expense->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @elseif($expense->status_approve == HelperDateTime::APPROVED)
                   @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
                     <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">
-                      {{ ($expense->type_submit == true) ? __('Submit_Payment') : __('Submit_Request') }}
+                      {{ ($expense->type_submit == true) ? __("messages.Submit_Payment") : __("messages.Submit_Request") }}
                     </button>
                   @endif
                 @endif
@@ -138,6 +138,8 @@
                 @elseif($expense->status_approve == HelperDateTime::APPROVED)
                   @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
                   <a href="{{ url('/expense-budget/' . $value->id . '/edit') }}" title="@lang('messages.Edit')"><i class="fa fa-fw fa-edit"></i></a>
+                  <a href="javascript:void(0);" onclick="confirmDeleteAjax(event, 'expense-budget', '{{$value->id}}')" title="@lang('messages.Delete')"><i class="fa fa-fw fa-trash-o"></i>
+                  </a>
                   @endif
                 @endif
               </td>
