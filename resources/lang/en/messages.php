@@ -61,6 +61,7 @@
         'Submit_Payment' => 'Submit Payment',
         'Submit_Request' => 'Submit Request',
         'Create_Expense_Budget_Button' => 'Create Expense Budget',
-        'Edit_Expense_Budget' => 'Edit Expense Budget'
+        'Edit_Expense_Budget' => 'Edit Expense Budget',
+        'UserName' => 'User Name'
     ];
 ?>

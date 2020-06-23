@@ -61,6 +61,7 @@
         'Submit_Payment' => '決済申請',
         'Submit_Request' => '稟議申請',
         'Create_Expense_Budget_Button' => '経費と予算の結合作成',
-        'Edit_Expense_Budget' => '経費と予算の結合を編集'
+        'Edit_Expense_Budget' => '経費と予算の結合を編集',
+        'UserName' => 'ユーザ名'
     ];
 ?>

@@ -32,7 +32,10 @@ class ApiController extends Controller
                 DB::beginTransaction();
                 $user->update([
                     'accessToken' => null,
-                    'refreshToken' => null
+                    'refreshToken' => null,
+                    'userId' => null,
+                    'roleName' => null,
+                    'userNameSF' => null
                 ]);
                 DB::commit();
             }
@@ -52,13 +55,15 @@ class ApiController extends Controller
             if(isset($token) && $token->access_token) {
                 $id = explode('/', $token->id);
                 $userId = last($id);
-                $roleName = $this->helperService->getRoleUser($token->access_token, $userId);
+                $userSF = $this->helperService->getRoleUser($token->access_token, $userId);
+
                 DB::beginTransaction();
                 $this->apiConnect::findOrFail(Auth::user()->id)->update([
                     'accessToken' => $token->access_token,
                     'refreshToken' => $token->refresh_token,
+                    'userNameSF' => $userSF->Username,
                     'userId' => $userId,
-                    'roleName' => $roleName
+                    'roleName' => $userSF->UserRole ?? 'User'
                 ]);
                 DB::commit();
             }

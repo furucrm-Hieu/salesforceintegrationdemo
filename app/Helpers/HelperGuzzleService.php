@@ -214,8 +214,8 @@ class HelperGuzzleService
 
     if($response->status() == 200) {
       $data = json_decode($response->getBody()->getContents());
-      $roleName = $data->records[0]->UserRole;
-      return empty($roleName) ? 'User' : $roleName->Name;
+      return $data->records[0];
+      //return empty($roleName) ? 'User' : $roleName->Name;
     }
 
     return 'User';

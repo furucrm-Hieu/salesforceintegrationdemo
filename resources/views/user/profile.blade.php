@@ -28,6 +28,7 @@
                 <div class="row" style="height: 200px;">
                     <div class="centered">
                         <div class="col-xs-6 col-xs-offset-3" style="text-align: center; margin-bottom:10px">
+                            <h4>@lang('messages.UserName'): {{ Auth::user()->userNameSF }}</h4>
                             <h4>@lang('messages.Status'): {{ isset($user->accessToken) ? __('messages.Connected') : __('messages.Disconnected') }}</h4>
                         </div>
                         <div class="col-xs-6 col-xs-offset-3">
