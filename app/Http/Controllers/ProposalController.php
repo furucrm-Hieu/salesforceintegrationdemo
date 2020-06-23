@@ -354,6 +354,48 @@ class ProposalController extends Controller
         }
     }
 
+    public function getInfoApproval(Request $request, $typesubmit, $object) {
+        try {
+            $text1 = '';
+            $text2 = '';
+
+            if($typesubmit == 'payment'){
+                $text1 = $this->hHelperGuzzleService->getFieldManager(Auth::user()->accessToken, Auth::user()->userId);
+                $nameManager = $this->hHelperGuzzleService->getFieldText2(Auth::user()->accessToken, $object);
+                foreach ($nameManager as $key => $value) {
+                    if($value['DeveloperName'] == 'Manager')
+                    {
+                        $text2 = $value['Description'];
+                    }              
+                };
+
+                $text1 = 'Supervisor  : '.$text1;
+                $text2 = 'Manager  : '.$text2;
+            }else {
+
+                $nameManager = $this->hHelperGuzzleService->getFieldText2(Auth::user()->accessToken, $object);
+                foreach ($nameManager as $key => $value) {
+                    if($value['DeveloperName'] == 'General_Manager')
+                    {
+                        $text1 = $value['Description'];
+                    }
+                    elseif($value['DeveloperName'] == 'CEO_Approved') {
+                        $text2 = $value['Description'];
+                    }              
+                };
+
+                $text1 = 'General Manager : '.$text1;
+                $text2 = 'CEO Approved : '.$text2;
+            }
+            
+            return response()->json(['success' => true, 'text1' => $text1, 'text2' => $text2]);
+            
+        } catch (\Exception $ex) {
+            Log::info($ex->getMessage().'- getInfoApproval - ProposalController');
+            return response()->json(['success' => false]);
+        }
+    }
+
     public function submitApproval(Request $request) {
         try {
             $id = $request->input('id');

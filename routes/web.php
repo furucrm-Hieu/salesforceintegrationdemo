@@ -40,6 +40,8 @@ Route::group(['middleware' => ['checkAuth']], function() {
         Route::get('/callback', 'ApiController@callback')->name('callback');
         // Route::get('/refreshToken', 'ApiController@refreshToken')->name('refreshToken');
     });
+
+    Route::get('/get-info-approval/{typesubmit}/{object}', 'ProposalController@getInfoApproval');
 });
 Route::get('', 'AuthController@getLogin');
 Route::post('post-login', 'AuthController@postLogin');

@@ -22,14 +22,21 @@
               <div class="col-sm-4" ></div>
               <div class="col-sm-3" >
                 @if($expense->status_approve == HelperDateTime::PENDING)
-                <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">@lang("messages.Submit_Payment")</button>
+                <button type="button" class="btn btn-info" onclick="showModal(event, 'payment','Expense__c')">
+                  @lang("messages.Submit_Payment")
+                </button>
                 <a class="btn btn-primary" href="{{url('/expense/'.$expense->id.'/edit')}}">@lang("messages.Edit")</a>
                 <button type="button" class="btn btn-danger" onclick="getConfirmDelete(event)">@lang("messages.Delete")</button>
                 @elseif($expense->status_approve == HelperDateTime::APPROVED)
                   @if(Auth::user()->roleName ==  HelperDateTime::FINANCE)
-                    <button type="button" class="btn btn-info" onclick="postSubmitApproval(event)">
-                      {{ ($expense->type_submit == true) ? __("messages.Submit_Payment") : __("messages.Submit_Request") }}
+                    @if($expense->type_submit == true)                 
+                    <button type="button" class="btn btn-info" onclick="showModal(event, 'payment','Expense__c')">
+                      @lang("messages.Submit_Payment")
                     </button>
+                    @else
+                    <button type="button" class="btn btn-info" onclick="showModal(event, 'request','Expense__c')">@lang("messages.Submit_Request")
+                    </button>
+                    @endif
                   @endif
                 @endif
               </div>
@@ -101,6 +108,11 @@
           {{ csrf_field() }}
           <input type="hidden" name="id" value="{{$expense->id}}" />
         </form>
+
+        <!-- start form show info approval -->
+        @include('component.modal_info_approval')
+        <!-- end form show info approval -->
+
       </div>
 
       <!-- start box junction -->
@@ -181,6 +193,30 @@
         $('#overlay').fadeIn();
         $('#delete-form').submit();
       }
+    }
+
+    function showModal(event, type_submit, object) {
+      $('#overlay').fadeIn();
+      $.ajax({
+        url: base_url + '/get-info-approval/' + type_submit + '/' + object,
+        type: 'GET',
+        success: function (res) {
+          if (res.success == true) {
+            $('#overlay').fadeOut();
+            $('#text1').html(res.text1);
+            $('#text2').html(res.text2);
+          }
+          else {
+            alert(tokenError);
+          }
+        },
+        error: function (res) {
+          $('#overlay').fadeOut();
+          alert(systemError);
+        }
+      });
+      
+      $('#modal-default').modal('show');
     }
 
     function postSubmitApproval(event) {

@@ -229,5 +229,58 @@ class HelperGuzzleService
     return $dateTimeUTC->toDateTimeString();
   }
 
+  public function getFieldManager($token, $code){
+
+    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Username,+Manager.Name+FROM+User+WHERE+Id+=+'".$code."'";
+
+    $response = Http::withHeaders([
+      'Authorization' => 'Bearer '.$token,
+      'Content-Type' => 'application/json',
+    ])->get($url);
+
+    if($response->status() == 200) {
+      $data = json_decode($response->getBody()->getContents());
+      $userManager = $data->records[0]->Manager;
+      return empty($userManager) ? '' : $userManager->Name;
+    }
+
+    return '';
+  }
+
+  public function getFieldText2($token, $object){
+
+    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Description,DeveloperName,Id,Name+FROM+ProcessNode+WHERE+ProcessDefinition.State+=+'Active'+and+DeveloperName+<>+'Supervisor'+and+ProcessDefinition.TableEnumOrId+=+'".$object."'";
+
+    $response = Http::withHeaders([
+      'Authorization' => 'Bearer '.$token,
+      'Content-Type' => 'application/json',
+    ])->get($url);
+
+    if($response->status() == 200) {
+      $data = json_decode($response->getBody()->getContents());
+      return $this->convertDataInfoApproval($data);
+    }
+
+    return [];
+  }
+
+  public function convertDataInfoApproval($data) {
+    $arrValue = [];
+
+    if(count($data->records) > 0)
+    {
+      foreach ($data->records as $value) {
+        $arrData = [
+          "Description" => $value->Description,
+          "DeveloperName" => $value->DeveloperName,
+          "Name" => $value->Name,
+        ];
+        array_push($arrValue, $arrData);
+      }
+    }
+    
+    return $arrValue;
+  }
+
 }
 
