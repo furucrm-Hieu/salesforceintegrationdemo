@@ -63,7 +63,7 @@ class ApiController extends Controller
                     'refreshToken' => $token->refresh_token,
                     'userNameSF' => $userSF->Username,
                     'userId' => $userId,
-                    'roleName' => $userSF->UserRole ?? 'User'
+                    'roleName' => empty($userSF->UserRole) ? 'User' : $userSF->UserRole->Name
                 ]);
                 DB::commit();
             }
