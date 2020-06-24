@@ -62,6 +62,13 @@
         'Submit_Request' => 'Submit Request',
         'Create_Expense_Budget_Button' => 'Create Expense Budget',
         'Edit_Expense_Budget' => 'Edit Expense Budget',
-        'UserName' => 'User Name'
+        'UserName' => 'User Name',
+        'Approval_Process' => 'Approval Process',
+        'Close' => 'Close',
+        'Supervisor' => 'Supervisor',
+        'Manager' => 'Manager',
+        'General_Manager' => 'General Manager',
+        'CEO_Approved' => 'CEO Approved',
+        'Type_Submit' => 'Type Submit'
     ];
 ?>

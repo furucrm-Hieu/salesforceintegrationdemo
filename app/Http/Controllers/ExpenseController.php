@@ -196,7 +196,7 @@ class ExpenseController extends Controller
             if($expense->status_approve == $this->hHelperConvertDateTime::SUBMIT){
                 return redirect()->back();
             }
-            
+
             return view('expense.edit', compact('expense', 'apiConnect'));
 
         } catch (\Exception $ex) {

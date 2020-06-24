@@ -62,6 +62,13 @@
         'Submit_Request' => '稟議申請',
         'Create_Expense_Budget_Button' => '経費と予算の結合作成',
         'Edit_Expense_Budget' => '経費と予算の結合を編集',
-        'UserName' => 'ユーザ名'
+        'UserName' => 'ユーザ名',
+        'Approval_Process' => '承認プロセス',
+        'Close' => '閉じる',
+        'Supervisor' => '上長承認',
+        'Manager' => '課長承認',
+        'General_Manager' => '部長承認',
+        'CEO_Approved' => '役員承認',
+        'Type_Submit' => '申請タイプ'
     ];
 ?>

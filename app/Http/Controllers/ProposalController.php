@@ -366,11 +366,11 @@ class ProposalController extends Controller
                     if($value['DeveloperName'] == 'Manager')
                     {
                         $text2 = $value['Description'];
-                    }              
+                    }
                 };
 
-                $text1 = 'Supervisor  : '.$text1;
-                $text2 = 'Manager  : '.$text2;
+                $text1 = __('messages.Supervisor').'  : '.$text1;
+                $text2 = __('messages.Manager').'  : '.$text2;
             }else {
 
                 $nameManager = $this->hHelperGuzzleService->getFieldText2(Auth::user()->accessToken, $object);
@@ -381,15 +381,15 @@ class ProposalController extends Controller
                     }
                     elseif($value['DeveloperName'] == 'CEO_Approved') {
                         $text2 = $value['Description'];
-                    }              
+                    }
                 };
 
-                $text1 = 'General Manager : '.$text1;
-                $text2 = 'CEO Approved : '.$text2;
+                $text1 = __('messages.General_Manager').' : '.$text1;
+                $text2 = __('messages.CEO_Approved').' : '.$text2;
             }
-            
+
             return response()->json(['success' => true, 'text1' => $text1, 'text2' => $text2]);
-            
+
         } catch (\Exception $ex) {
             Log::info($ex->getMessage().'- getInfoApproval - ProposalController');
             return response()->json(['success' => false]);
