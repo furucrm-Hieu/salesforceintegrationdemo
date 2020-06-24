@@ -10,6 +10,7 @@
         <th style="width: 300px">@lang('messages.Date')</th>
         <th style="width: 300px">@lang('messages.Status_TableList')</th>
         <th>@lang('messages.Assigned_To')</th>
+        <th>Type Submit</th>
       </tr>
       </thead>
       <tbody>
@@ -19,6 +20,7 @@
           <td>{{$approval['Date']}}</td>
           <td>{{$approval['Status']}}</td>
           <td>{{$approval['AssignedTo']}}</td>
+          <td>{{$approval['TypeSubmit']}}</td>
         </tr>
       @endforeach
       </tbody>

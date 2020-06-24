@@ -125,7 +125,7 @@ class HelperGuzzleService
 
   public function guzzleGetApproval($token, $code) {
 
-    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Id,(SELECT+Id,OriginalActor.Name,ProcessNode.Name,SystemModstamp,Comments,StepStatus+FROM+StepsAndWorkitems+ORDER+BY+CreatedDate+DESC,+Id+DESC)+FROM+ProcessInstance+WHERE+TargetObjectId+=+'".$code."'+ORDER+BY+CreatedDate+DESC";
+    $url = $this::LINK_SF."v36.0/query/?q=SELECT+Id,ProcessDefinition.Name,(SELECT+Id,OriginalActor.Name,ProcessNode.Name,SystemModstamp,Comments,StepStatus+FROM+StepsAndWorkitems+ORDER+BY+CreatedDate+DESC,+Id+DESC)+FROM+ProcessInstance+WHERE+TargetObjectId+=+'".$code."'+ORDER+BY+CreatedDate+DESC";
 
     $response = Http::withHeaders([
       'Authorization' => 'Bearer '.$token,
@@ -182,16 +182,17 @@ class HelperGuzzleService
     if(count($data->records) > 0)
     {
       foreach ($data->records as $value) {
-
+        $type_submit = $value->ProcessDefinition->Name;
         $temp1 = $value->StepsAndWorkitems->records;
 
         foreach ($temp1 as $key => $value1) {
 
           $arrData = [
-          "StepName" => empty($value1->ProcessNode->Name) ? 'Request Submitted' : $value1->ProcessNode->Name,
-          "Date" => $this->convertDateTimeApproval($value1->SystemModstamp),
-          "Status" => ($value1->StepStatus == 'Started') ? 'Submitted' : $value1->StepStatus,
-          "AssignedTo" => $value1->OriginalActor->Name,
+            "StepName" => empty($value1->ProcessNode->Name) ? 'Request Submitted' : $value1->ProcessNode->Name,
+            "Date" => $this->convertDateTimeApproval($value1->SystemModstamp),
+            "Status" => ($value1->StepStatus == 'Started') ? 'Submitted' : $value1->StepStatus,
+            "AssignedTo" => $value1->OriginalActor->Name,
+            "TypeSubmit" => $type_submit,
           ];
 
           array_push($arrValue, $arrData);
