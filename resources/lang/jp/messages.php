@@ -50,7 +50,7 @@
         'New_Expense' => '経費作成',
         'Expense_Name' => '経費名',
         'Create_Expense_Budget_Title' => '経費と予算の結合のテーブル作成',
-        'Approval_Process_Flow' => "承認プロセス",
+        'Approval_Process_Flow' => "承認履歴",
         'Step_Name' => 'ステップ名',
         'Date' => '日付',
         'Status_TableList' => 'ステータス',

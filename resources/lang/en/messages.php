@@ -50,7 +50,7 @@
         'New_Expense' => 'New Expense',
         'Expense_Name' => 'Expense Name',
         'Create_Expense_Budget_Title' => 'Create Expense Budget',
-        'Approval_Process_Flow' => "Approval Process Flow",
+        'Approval_Process_Flow' => "Approval Process History",
         'Step_Name' => 'Step Name',
         'Date' => 'Date',
         'Status_TableList' => 'Status',
